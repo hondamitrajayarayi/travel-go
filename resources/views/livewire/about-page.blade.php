@@ -269,7 +269,133 @@
         </div>
     </section>
 
-    <!-- 4. KEUNGGULAN KAMI (WHY US) -->
+    <!-- 4. OUR TRAVEL SERVICES SECTION -->
+    <section id="services" class="scroll-mt-24 sm:scroll-mt-28 py-16 sm:py-20 lg:py-24 bg-slate-50/80 border-b border-slate-200/60 overflow-hidden relative"
+             x-data="{ inView: false }"
+             x-init="const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { inView = true; obs.disconnect(); } }, { threshold: 0.12 }); obs.observe($el);">
+        
+        <!-- Ambient Accent Glow -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-sky-100/60 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Section Header -->
+            <div class="text-center max-w-3xl mx-auto mb-14 sm:mb-16 space-y-3.5 transition-all duration-700 ease-out"
+                 :class="inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'">
+                <p class="text-[12px] font-semibold tracking-[.18em] text-[#1B5A7A] uppercase">
+                    OUR TRAVEL SERVICES
+                </p>
+                <h2 class="text-3xl sm:text-4xl font-semibold text-slate-900 tracking-tight leading-tight">
+                    Pilihan Layanan Perjalanan Terbaik
+                </h2>
+                <p class="text-sm sm:text-base text-[#525B6B] leading-relaxed font-normal max-w-2xl mx-auto">
+                    Berbagai pilihan layanan perjalanan yang dirancang untuk memberikan pengalaman liburan yang nyaman, aman, dan berkesan.
+                </p>
+            </div>
+
+            <!-- 3 Service Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+                
+                <!-- 1. Tour Domestik & Internasional -->
+                <div class="group relative rounded-3xl bg-white p-7 sm:p-8 border border-slate-200/80 shadow-xs hover:shadow-xl hover:shadow-blue-900/5 hover:border-blue-300 hover:-translate-y-2 transition-all duration-500 flex flex-col justify-between"
+                     :class="inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'"
+                     style="transition-delay: 100ms;">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100/80 text-blue-600 flex items-center justify-center mb-6 group-hover:bg-[#1B5A7A] group-hover:text-white group-hover:scale-105 transition-all duration-300">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 012 2v2.945M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full inline-block mb-3">
+                            01 / PACKAGES
+                        </span>
+                        <h3 class="text-lg sm:text-xl font-semibold text-slate-900 group-hover:text-[#1B5A7A] transition-colors tracking-tight mb-3">
+                            Tour Domestik & Internasional
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                            Jelajahi berbagai destinasi dunia melalui paket perjalanan yang telah dirancang dengan nyaman dan terpercaya.
+                        </p>
+                    </div>
+
+                    <div class="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#1B5A7A]">
+                        <a href="{{ route('home') }}#tours" class="inline-flex items-center gap-1.5 group-hover:text-[#13425a] transition-colors">
+                            <span>Lihat Jadwal Tour</span>
+                            <svg class="w-3.5 h-3.5 group-hover:translate-x-1.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 2. Private Trip Group Tour -->
+                <div class="group relative rounded-3xl bg-white p-7 sm:p-8 border border-slate-200/80 shadow-xs hover:shadow-xl hover:shadow-sky-900/5 hover:border-sky-300 hover:-translate-y-2 transition-all duration-500 flex flex-col justify-between"
+                     :class="inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'"
+                     style="transition-delay: 250ms;">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-sky-50 border border-sky-100/80 text-sky-600 flex items-center justify-center mb-6 group-hover:bg-sky-600 group-hover:text-white group-hover:scale-105 transition-all duration-300">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-sky-700 bg-sky-50 px-2.5 py-1 rounded-full inline-block mb-3">
+                            02 / CUSTOM TRIP
+                        </span>
+                        <h3 class="text-lg sm:text-xl font-semibold text-slate-900 group-hover:text-sky-600 transition-colors tracking-tight mb-3">
+                            Private Trip Group Tour
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                            Paket perjalanan yang fleksibel untuk keluarga, komunitas, sekolah, maupun perusahaan sesuai kebutuhan Anda.
+                        </p>
+                    </div>
+
+                    <div class="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-sky-600">
+                        <a href="{{ route('private-trip') }}" class="inline-flex items-center gap-1.5 group-hover:text-sky-700 transition-colors">
+                            <span>Rancang Private Trip</span>
+                            <svg class="w-3.5 h-3.5 group-hover:translate-x-1.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 3. Layanan MICE -->
+                <div class="group relative rounded-3xl bg-white p-7 sm:p-8 border border-slate-200/80 shadow-xs hover:shadow-xl hover:shadow-emerald-900/5 hover:border-emerald-300 hover:-translate-y-2 transition-all duration-500 flex flex-col justify-between"
+                     :class="inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'"
+                     style="transition-delay: 400ms;">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100/80 text-emerald-600 flex items-center justify-center mb-6 group-hover:bg-emerald-600 group-hover:text-white group-hover:scale-105 transition-all duration-300">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full inline-block mb-3">
+                            03 / CORPORATE
+                        </span>
+                        <h3 class="text-lg sm:text-xl font-semibold text-slate-900 group-hover:text-emerald-600 transition-colors tracking-tight mb-3">
+                            Layanan MICE
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                            Menyediakan untuk kebutuhan Meeting, Incentive, Convention dan Exhibition.
+                        </p>
+                    </div>
+
+                    <div class="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-emerald-600">
+                        <a href="https://wa.me/{{ \App\Models\Setting::get('whatsapp_number', '6287887840636') }}?text={{ urlencode('Halo Super Vacation, saya ingin konsultasi mengenai kebutuhan Layanan MICE (Meeting, Incentive, Convention, Exhibition).') }}" 
+                           target="_blank" 
+                           class="inline-flex items-center gap-1.5 group-hover:text-emerald-700 transition-colors">
+                            <span>Konsultasi MICE</span>
+                            <svg class="w-3.5 h-3.5 group-hover:translate-x-1.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. KEUNGGULAN KAMI (WHY US) -->
     <section id="why-us" class="scroll-mt-24 sm:scroll-mt-28 py-16 sm:py-20 lg:py-24 bg-white border-b border-slate-100 overflow-hidden"
              x-data="{ inView: false }"
              x-init="const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { inView = true; obs.disconnect(); } }, { threshold: 0.12 }); obs.observe($el);">
@@ -436,7 +562,7 @@
                 Sampaikan destinasi yang diminati, waktu keberangkatan, durasi, dan kisaran budget. Tour Consultant kami akan membantu mencarikan pilihan yang paling sesuai.
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4">
-                <a href="https://wa.me/6281234567890?text=Halo%20Admin%20Super%20Vacation,%20saya%20ingin%20konsultasi%20rencana%20perjalanan%20saya" 
+                <a href="https://wa.me/{{ \App\Models\Setting::get('whatsapp_number', '6287887840636') }}?text={{ urlencode('Halo Admin Super Vacation, saya ingin konsultasi rencana perjalanan saya.') }}" 
                    target="_blank" 
                    class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full bg-[#1b5a7a] hover:bg-[#13425a] text-white font-medium text-sm transition-all duration-300 shadow-md shadow-[#1b5a7a]/20 hover:shadow-xl hover:shadow-[#1b5a7a]/30 hover:-translate-y-0.5 active:scale-95 group">
                     <svg class="w-4 h-4 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24">

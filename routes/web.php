@@ -4,6 +4,7 @@ use App\Livewire\AboutPage;
 use App\Livewire\ContactPage;
 use App\Livewire\FaqPage;
 use App\Livewire\HomePage;
+use App\Livewire\PrivateTripPage;
 use App\Livewire\TermsPage;
 use App\Livewire\TourDetail;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,9 @@ Route::get('/', HomePage::class)->name('home');
 
 // Halaman Tentang Kami (About Us)
 Route::get('/about-us', AboutPage::class)->name('about');
+
+// Halaman Private Trip & Custom Tour
+Route::get('/private-trip', PrivateTripPage::class)->name('private-trip');
 
 // Halaman Syarat & Ketentuan (Terms & Conditions)
 Route::get('/terms-conditions', TermsPage::class)->name('terms');

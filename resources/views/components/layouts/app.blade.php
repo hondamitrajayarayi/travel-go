@@ -30,7 +30,7 @@
                     mobileAboutOpen: false,
                     aboutDropdownOpen: false, 
                     scrolled: false,
-                    activeNav: '{{ request()->routeIs('about') ? 'about' : (request()->routeIs('contact') ? 'contact' : (request()->routeIs('terms') ? 'terms' : (request()->routeIs('faq') ? 'faq' : 'home'))) }}',
+                    activeNav: '{{ request()->routeIs('about') ? 'about' : (request()->routeIs('contact') ? 'contact' : (request()->routeIs('terms') ? 'terms' : (request()->routeIs('faq') ? 'faq' : (request()->routeIs('private-trip') ? 'private-trip' : 'home')))) }}',
                     init() {
                         const updateScroll = () => {
                             this.scrolled = window.pageYOffset > 10;
@@ -49,7 +49,7 @@
                     </a>
 
                     <!-- Desktop Nav Links -->
-                    <nav class="hidden md:flex items-center space-x-7 lg:space-x-9 text-xs font-medium tracking-tight">
+                    <nav class="hidden md:flex items-center space-x-7 lg:space-x-9 text-sm font-medium tracking-tight">
                         
                         <!-- 1. HOME -->
                         <a href="{{ route('home') }}" 
@@ -95,6 +95,13 @@
                                     <span>History</span>
                                 </a>
 
+                                <a href="{{ route('about') }}#services" 
+                                   wire:navigate
+                                   @click="activeNav = 'about'; aboutDropdownOpen = false; scrollToSection('services')" 
+                                   class="flex items-center px-4 py-2 text-xs uppercase tracking-wider text-slate-600 hover:text-[#3372A1] hover:bg-sky-50/50 transition-colors">
+                                    <span>Services</span>
+                                </a>
+
                                 <a href="{{ route('about') }}#why-us" 
                                    wire:navigate
                                    @click="activeNav = 'about'; aboutDropdownOpen = false; scrollToSection('why-us')" 
@@ -121,7 +128,7 @@
                         </a>
 
                         <!-- 4. PRIVATE TRIP -->
-                        <a href="{{ route('home') }}#tours" 
+                        <a href="{{ route('private-trip') }}" 
                            wire:navigate
                            @click="activeNav = 'private-trip'" 
                            :class="activeNav === 'private-trip' ? 'text-[#3372A1] font-semibold' : 'text-slate-600 hover:text-[#3372A1] font-normal'" 
@@ -256,6 +263,12 @@
                                    class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-[#3372A1] uppercase tracking-wider">
                                     HISTORY
                                 </a>
+                                <a href="{{ route('about') }}#services" 
+                                   wire:navigate
+                                   @click="activeNav = 'about'; mobileMenuOpen = false; scrollToSection('services')" 
+                                   class="block px-3 py-2 text-xs font-semibold text-slate-600 hover:text-[#3372A1] uppercase tracking-wider">
+                                    SERVICES
+                                </a>
                                 <a href="{{ route('about') }}#why-us" 
                                    wire:navigate
                                    @click="activeNav = 'about'; mobileMenuOpen = false; scrollToSection('why-us')" 
@@ -279,7 +292,7 @@
 
                         <!-- 4. PRIVATE TRIP -->
                         <div class="border-b border-slate-100/80">
-                            <a href="{{ route('home') }}#tours" 
+                            <a href="{{ route('private-trip') }}" 
                                wire:navigate
                                @click="activeNav = 'private-trip'; mobileMenuOpen = false" 
                                :class="activeNav === 'private-trip' ? 'text-[#3372A1] font-semibold' : 'text-slate-800 font-medium hover:text-[#3372A1]'"
@@ -393,6 +406,11 @@
                             <li>
                                 <a href="{{ route('home') }}#tours" wire:navigate class="hover:text-[#3372A1] transition-colors duration-150 inline-flex items-center gap-1.5">
                                     <span>TOUR SCHEDULE</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('private-trip') }}" wire:navigate class="hover:text-[#3372A1] transition-colors duration-150 inline-flex items-center gap-1.5">
+                                    <span>PRIVATE TRIP</span>
                                 </a>
                             </li>
                             <li>
