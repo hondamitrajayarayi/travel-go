@@ -11,15 +11,22 @@ class TestimonialFactory extends Factory
 
     public function definition(): array
     {
-        $platform = $this->faker->randomElement(['youtube_short', 'instagram']);
-
         return [
-            'title'     => $this->faker->sentence(4),
-            'platform'  => $platform,
-            'embed_url' => $platform === 'youtube_short'
-                ? 'https://www.youtube.com/embed/' . $this->faker->regexify('[A-Za-z0-9_-]{11}')
-                : 'https://www.instagram.com/p/' . $this->faker->regexify('[A-Za-z0-9_-]{10}') . '/embed',
-            'is_active' => true,
+            'name'       => $this->faker->name(),
+            'tour_title' => $this->faker->randomElement([
+                'Favorite Autumn in China (Beijing & Shanghai)',
+                'Japan Golden Route & Mt. Fuji Experience',
+                'Magical Turkey & Hot Air Balloon Cappadocia',
+                'Autumn in Korea & Nami Island Romance',
+                'West Europe Highlights 7 Countries',
+            ]),
+            'trip_date'  => $this->faker->randomElement(['Oktober 2026', 'September 2026', 'Agustus 2026', 'Juli 2026']),
+            'story'      => $this->faker->paragraph(3),
+            'rating'     => 5,
+            'avatar'     => null,
+            'photo'      => null,
+            'is_active'  => true,
+            'sort_order' => $this->faker->numberBetween(1, 10),
         ];
     }
 }

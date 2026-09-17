@@ -44,6 +44,37 @@
 @endphp
 
 <div>
+    <!-- SCROLL ANIMATION STYLES -->
+    <style>
+        .reveal-item {
+            opacity: 0;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+        .reveal-up {
+            transform: translateY(32px);
+        }
+        .reveal-left {
+            transform: translateX(-36px);
+        }
+        .reveal-right {
+            transform: translateX(36px);
+        }
+        .reveal-scale {
+            transform: scale(0.94) translateY(20px);
+        }
+        .reveal-fade {
+            transform: translateY(16px);
+        }
+
+        /* Triggered state */
+        .is-revealed.reveal-item,
+        .is-revealed .reveal-item {
+            opacity: 1 !important;
+            transform: translate3d(0, 0, 0) scale(1) !important;
+        }
+    </style>
+
         <!-- 1. HERO BANNER SECTION DENGAN FILTER TARGET TAMPILAN (MOBILE SAJA / WEB SAJA / DUA-DUANYA) -->
     <section id="hero" 
              x-data="{ 
@@ -166,21 +197,21 @@
             </template>
 
             <!-- FLOATING SEARCH BAR (KAPSUL PUTIH SIMPEL & ELEGAN ALA REFERENSI GAMBAR) -->
-            <div class="w-full max-w-3xl mx-auto bg-white rounded-[28px] sm:rounded-full border border-slate-200/90 shadow-2xl p-3 sm:p-2 sm:pl-8 text-left transition-all">
+            <div class="reveal-item reveal-scale w-full max-w-3xl mx-auto bg-white rounded-[28px] sm:rounded-full border border-slate-200/90 shadow-2xl p-3 sm:p-2 sm:pl-8 text-left transition-all" style="transition-delay: 150ms">
                 <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-0">
                     
-                    <!-- 1. TUJUAN -->
+                    <!-- 1. TUJUAN (LIST NEGARA) -->
                     <div class="flex-1 w-full sm:w-auto px-3 sm:px-4 py-1 sm:border-r border-slate-200">
-                        <label for="search-destination" class="block text-[11px] font-semibold tracking-[.18em] text-slate-500 uppercase mb-0.5">
+                        <label for="search-country" class="block text-[11px] font-semibold tracking-[.18em] text-slate-500 uppercase mb-0.5">
                             TUJUAN
                         </label>
                         <div class="relative flex items-center">
-                            <select id="search-destination" 
-                                    wire:model.live="selectedDestination" 
+                            <select id="search-country" 
+                                    wire:model="selectedCountry" 
                                     class="w-full bg-transparent font-normal text-slate-900 text-[15px] sm:text-[16px] outline-none cursor-pointer appearance-none pr-7 py-0.5">
-                                <option value="all">Semua destinasi</option>
-                                @foreach($destinations as $dest)
-                                    <option value="{{ $dest }}">{{ $dest }}</option>
+                                <option value="all">Semua Destinasi / Negara</option>
+                                @foreach($countries as $country)
+                                    <option value="{{ $country->id }}">{{ $country->name }}</option>
                                 @endforeach
                             </select>
                             <div class="absolute inset-y-0 right-0 flex items-center pointer-events-none text-slate-500">
@@ -198,7 +229,7 @@
                         </label>
                         <div class="relative flex items-center">
                             <select id="search-month" 
-                                    wire:model.live="selectedMonth" 
+                                    wire:model="selectedMonth" 
                                     class="w-full bg-transparent font-normal text-slate-900 text-[15px] sm:text-[16px] outline-none cursor-pointer appearance-none pr-7 py-0.5">
                                 <option value="all">Semua bulan</option>
                                 @foreach($months as $key => $label)
@@ -215,17 +246,18 @@
 
                     <!-- 3. TOMBOL CARI TOUR -->
                     <div class="w-full sm:w-auto pt-1 sm:pt-0 sm:pl-2">
-                        <a href="#tours" 
-                           class="w-full sm:w-auto inline-flex items-center justify-center bg-[#1B5A7A] hover:bg-[#12425B] text-white font-semibold text-[14px] sm:text-[15px] tracking-tight px-8 sm:px-10 py-3.5 sm:py-3.5 rounded-full transition-all duration-200 shadow-md hover:shadow-lg active:scale-95">
+                        <button type="button" 
+                                wire:click="searchTours" 
+                                class="w-full sm:w-auto inline-flex items-center justify-center bg-[#1B5A7A] hover:bg-[#12425B] text-white font-semibold text-[14px] sm:text-[15px] tracking-tight px-8 sm:px-10 py-3.5 sm:py-3.5 rounded-full transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 cursor-pointer">
                             Cari Tour
-                        </a>
+                        </button>
                     </div>
 
                 </div>
             </div>
 
             <!-- Reset Filter Active Indicator -->
-            @if($selectedDestination !== 'all' || $selectedMonth !== 'all' || $search !== '')
+            @if($selectedDestination !== 'all' || $selectedCountry !== 'all' || $selectedMonth !== 'all' || !empty($selectedMonths) || !empty($selectedYears) || $search !== '')
                 <div class="flex justify-center pt-1">
                     <button type="button" 
                             wire:click="resetFilters" 
@@ -249,7 +281,7 @@
     </section>
 
     <!-- KEUNGGULAN PERUSAHAAN (COMPANY ADVANTAGES - MODERN BENTO & INTERACTIVE SHOWCASE) -->
-    <section id="why-us" class="relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50/50 py-16 sm:py-20 lg:py-24 border-b border-slate-200/70 scroll-mt-20">
+    <section id="why-us" class="reveal-group relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50/50 py-16 sm:py-20 lg:py-24 border-b border-slate-200/70 scroll-mt-20">
         <!-- Background Ambient Glow Accents -->
         <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-sky-400/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -258,7 +290,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
                 
                 <!-- SISI KIRI: MULTI-LAYER VISUAL SHOWCASE DENGAN FLOATING TRUST BADGES -->
-                <div class="lg:col-span-5 relative">
+                <div class="lg:col-span-5 relative reveal-item reveal-left">
                     <!-- Frame Foto Utama -->
                     <div class="relative rounded-[32px] overflow-hidden shadow-2xl shadow-blue-950/10 border-4 border-white bg-slate-100 aspect-[4/5] group">
                         <img src="https://images.unsplash.com/photo-1539635278303-d4002c07eae3?auto=format&fit=crop&w=1000&q=80" 
@@ -300,7 +332,7 @@
                 <div class="lg:col-span-7 space-y-6 sm:space-y-7">
                     
                     <!-- Header Section -->
-                    <div class="space-y-3">
+                    <div class="space-y-3 reveal-item reveal-up">
                         <h2 class="text-2xl sm:text-3xl lg:text-4xl font-semibold text-slate-900 tracking-tight leading-[1.2]">
                             Wujudkan Liburan Impian dengan <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-sky-600 to-blue-800">Pengalaman Terbaik</span>
                         </h2>
@@ -313,7 +345,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 pt-1">
                         
                         <!-- 1. EXPERIENCED TEAM -->
-                        <div class="group p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-blue-300 hover:-translate-y-1 transition-all duration-300">
+                        <div class="reveal-item reveal-up group p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-blue-300 hover:-translate-y-1 transition-all duration-300" style="transition-delay: 100ms">
                             <div class="flex items-center justify-between mb-3">
                                 <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -333,7 +365,7 @@
                         </div>
 
                         <!-- 2. BEST VALUE TRIP -->
-                        <div class="group p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-emerald-300 hover:-translate-y-1 transition-all duration-300">
+                        <div class="reveal-item reveal-up group p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-emerald-300 hover:-translate-y-1 transition-all duration-300" style="transition-delay: 200ms">
                             <div class="flex items-center justify-between mb-3">
                                 <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -353,7 +385,7 @@
                         </div>
 
                         <!-- 3. DESTINATION MADE ACCESSIBLE -->
-                        <div class="group p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-sky-300 hover:-translate-y-1 transition-all duration-300">
+                        <div class="reveal-item reveal-up group p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-sky-300 hover:-translate-y-1 transition-all duration-300" style="transition-delay: 300ms">
                             <div class="flex items-center justify-between mb-3">
                                 <div class="w-10 h-10 rounded-xl bg-sky-50 border border-sky-100 text-sky-600 flex items-center justify-center group-hover:bg-sky-600 group-hover:text-white transition-colors duration-300">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -373,7 +405,7 @@
                         </div>
 
                         <!-- 4. CUSTOMER CENTERED SERVICE -->
-                        <div class="group p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-amber-300 hover:-translate-y-1 transition-all duration-300">
+                        <div class="reveal-item reveal-up group p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-amber-300 hover:-translate-y-1 transition-all duration-300" style="transition-delay: 400ms">
                             <div class="flex items-center justify-between mb-3">
                                 <div class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-colors duration-300">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -399,210 +431,193 @@
             </div>
         </div>
     </section>
-       <!-- 6. SECTION TESTIMONI & DOKUMENTASI (HORIZONTAL CAROUSEL SLIDER) -->
-    <section id="testimonials" 
-             x-data="{
-                scrollNext() {
-                    $refs.testimonialContainer.scrollBy({ left: 340, behavior: 'smooth' });
-                },
-                scrollPrev() {
-                    $refs.testimonialContainer.scrollBy({ left: -340, behavior: 'smooth' });
-                }
-             }"
-             class="py-20 bg-white border-t border-slate-200 relative overflow-hidden">
+
+    <!-- 4. SECTION PAKET WISATA (LIVEWIRE FILTER & SEARCH) -->
+    <section id="tours" class="reveal-group py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <!-- Header & Nav Buttons -->
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-                <div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200">Dokumentasi</span>
-                    <h2 class="text-3xl sm:text-4xl font-semibold text-slate-900 mt-2">Keseruan Wisatawan TravelGo</h2>
-                    <p class="text-slate-600 text-sm mt-1">Lihat video testimoni dan momen bahagia para traveler di setiap destinasi.</p>
+            <!-- Header & Filter Toolbar -->
+            <div class="mb-12 space-y-6">
+                <div class="text-center max-w-3xl mx-auto reveal-item reveal-up">
+                    <p class="mb-2 text-[12px] font-semibold tracking-[.12em] text-[#1B5A7A] uppercase">Tour pilihan kami</p>
+                    <h2 class="font-display text-[32px] leading-[1.15] font-semibold tracking-[-.025em] text-balance lg:text-[44px]">Tour yang pasti berangkat</h2>
+                    <p class="mt-3 max-w-xl mx-auto text-[15px] leading-[1.7] font-normal text-[#525B6B]">Jelajahi berbagai destinasi impian anda</p>
                 </div>
 
-                <!-- Tombol Navigasi Slider Kiri & Kanan -->
-                <div class="flex items-center gap-3">
-                    <button @click="scrollPrev()" 
-                            type="button" 
-                            title="Geser Kiri"
-                            class="w-11 h-11 rounded-full bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 flex items-center justify-center transition shadow-sm focus:outline-none active:scale-95">
-                        ❮
-                    </button>
-                    <button @click="scrollNext()" 
-                            type="button" 
-                            title="Geser Kanan"
-                            class="w-11 h-11 rounded-full bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 flex items-center justify-center transition shadow-sm focus:outline-none active:scale-95">
-                        ❯
-                    </button>
-                </div>
-            </div>
-
-            @if($testimonials->count() > 0)
-                <!-- Container Carousel Horizontal (Geser Samping) -->
-                <div x-ref="testimonialContainer" 
-                     class="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-6 pt-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-                    @foreach($testimonials as $testimonial)
-                        <div class="snap-start shrink-0 w-[290px] sm:w-[330px] bg-slate-50 border border-slate-200 rounded-3xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition duration-300">
-                            <div class="mb-3 flex items-center justify-between">
-                                <h4 class="text-sm font-semibold text-slate-900 line-clamp-1">{{ $testimonial->title }}</h4>
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase shrink-0 {{ $testimonial->platform === 'youtube_short' ? 'bg-red-100 text-red-600 border border-red-200' : 'bg-pink-100 text-pink-600 border border-pink-200' }}">
-                                    {{ $testimonial->platform === 'youtube_short' ? 'YouTube' : 'Instagram' }}
-                                </span>
-                            </div>
-
-                            <!-- Responsive Vertical Video Embed -->
-                            <div class="relative w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-200" style="aspect-ratio: 9/16; max-height: 480px;">
-                                @if($testimonial->platform === 'youtube_short')
-                                    @php
-                                        $embedUrl = $testimonial->embed_url;
-                                        if (str_contains($embedUrl, 'shorts/')) {
-                                            $videoId = explode('shorts/', $embedUrl)[1];
-                                            $videoId = explode('?', $videoId)[0];
-                                            $embedUrl = "https://www.youtube.com/embed/{$videoId}";
-                                        }
-                                    @endphp
-                                    <iframe class="w-full h-full" src="{{ $embedUrl }}" frameborder="0" allowfullscreen></iframe>
-                                @else
-                                    @php
-                                        $igUrl = rtrim($testimonial->embed_url, '/');
-                                        if (!str_contains($igUrl, '/embed')) {
-                                            $igUrl .= '/embed';
-                                        }
-                                    @endphp
-                                    <iframe class="w-full h-full" src="{{ $igUrl }}" frameborder="0" scrolling="no"></iframe>
+                <!-- Search & Multi-Select Array Filter Controls Container -->
+                <div x-data="{ mobileFilterOpen: false }" wire:ignore.self class="reveal-item reveal-fade bg-slate-50 border border-slate-200/90 rounded-3xl p-4 sm:p-6 shadow-sm space-y-4" style="transition-delay: 150ms">
+                    
+                    <!-- Mobile Filter Toggle Bar (Visible only on mobile < sm) -->
+                    <div class="sm:hidden">
+                        <button type="button" 
+                                @click="mobileFilterOpen = !mobileFilterOpen"
+                                class="w-full flex items-center justify-between px-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-semibold text-slate-800 shadow-xs active:scale-98 transition">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-[#1B5A7A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                                </svg>
+                                <span>Filter & Pencarian Tour</span>
+                                @if($search !== '' || $selectedCountry !== 'all' || !empty($selectedMonths) || !empty($selectedYears))
+                                    <span class="bg-[#1B5A7A] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                        Filter Aktif
+                                    </span>
                                 @endif
                             </div>
+                            <div class="flex items-center gap-1 text-slate-500 text-[11px] font-medium">
+                                <span x-text="mobileFilterOpen ? 'Sembunyikan' : 'Tampilkan'"></span>
+                                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': mobileFilterOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- 4 Column Filter Grid (Hidden on mobile by default, always visible on sm+) -->
+                    <div :class="mobileFilterOpen ? 'block' : 'hidden sm:block'" class="transition-all duration-300">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <!-- 1. Searching Input -->
+                            <div class="relative">
+                                <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Pencarian Tour</label>
+                                <div class="relative">
+                                    <input type="text" 
+                                           wire:model.live.debounce.300ms="search" 
+                                           placeholder="Cari tour / destinasi..." 
+                                           class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1B5A7A] focus:border-transparent transition" />
+                                    <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- 2. Filter Destinasi (Negara) -->
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Destinasi / Negara</label>
+                                <select wire:model.live="selectedCountry" 
+                                        class="w-full px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1B5A7A] focus:border-transparent transition cursor-pointer">
+                                    <option value="all">Semua Destinasi / Negara</option>
+                                    @foreach($countries as $country)
+                                        <option value="{{ $country->id }}">{{ $country->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- 3. Bulan Pemberangkatan (Multi-Select Dropdown Popover) -->
+                            <div class="relative" x-data="{ open: false }" @click.outside="open = false" wire:ignore.self>
+                                <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Bulan Pemberangkatan</label>
+                                <button type="button" 
+                                        @click="open = !open" 
+                                        class="w-full px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1B5A7A] transition flex items-center justify-between gap-2 shadow-xs cursor-pointer">
+                                    <span class="truncate">
+                                        @if(empty($selectedMonths))
+                                            Semua Bulan
+                                        @else
+                                            {{ count($selectedMonths) }} Bulan Terpilih
+                                        @endif
+                                    </span>
+                                    <svg class="w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+
+                                <!-- Dropdown Menu Popover -->
+                                <div x-show="open" 
+                                     x-transition:enter="transition ease-out duration-150"
+                                     x-transition:enter-start="opacity-0 scale-95"
+                                     x-transition:enter-end="opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-100"
+                                     x-transition:leave-start="opacity-100 scale-100"
+                                     x-transition:leave-end="opacity-0 scale-95"
+                                     class="absolute z-50 mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl p-3 space-y-2 left-0 sm:right-0 sm:left-auto"
+                                     style="display: none;">
+                                    <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Pilih Bulan</span>
+                                        @if(!empty($selectedMonths))
+                                            <button type="button" wire:click="$set('selectedMonths', [])" class="text-[11px] font-semibold text-rose-500 hover:underline">Reset</button>
+                                        @endif
+                                    </div>
+                                    <div class="max-h-56 overflow-y-auto space-y-1 custom-scrollbar pr-1">
+                                        @foreach($monthsList as $mNum => $mName)
+                                            <label wire:key="month-opt-{{ $mNum }}" class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700 select-none transition">
+                                                <input type="checkbox" 
+                                                       value="{{ $mNum }}" 
+                                                       wire:model.live="selectedMonths" 
+                                                       class="rounded border-slate-300 text-[#1B5A7A] focus:ring-[#1B5A7A] w-4 h-4" />
+                                                <span>{{ $mName }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 4. Tahun Pemberangkatan (Multi-Select Dropdown Popover) -->
+                            <div class="relative" x-data="{ open: false }" @click.outside="open = false" wire:ignore.self>
+                                <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Tahun Pemberangkatan</label>
+                                <button type="button" 
+                                        @click="open = !open" 
+                                        class="w-full px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1B5A7A] transition flex items-center justify-between gap-2 shadow-xs cursor-pointer">
+                                    <span class="truncate">
+                                        @if(empty($selectedYears))
+                                            Semua Tahun
+                                        @else
+                                            {{ implode(', ', $selectedYears) }}
+                                        @endif
+                                    </span>
+                                    <svg class="w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+
+                                <!-- Dropdown Menu Popover -->
+                                <div x-show="open" 
+                                     x-transition:enter="transition ease-out duration-150"
+                                     x-transition:enter-start="opacity-0 scale-95"
+                                     x-transition:enter-end="opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-100"
+                                     x-transition:leave-start="opacity-100 scale-100"
+                                     x-transition:leave-end="opacity-0 scale-95"
+                                     class="absolute z-50 mt-2 w-52 bg-white border border-slate-200 rounded-2xl shadow-xl p-3 space-y-2 right-0"
+                                     style="display: none;">
+                                    <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Pilih Tahun</span>
+                                        @if(!empty($selectedYears))
+                                            <button type="button" wire:click="$set('selectedYears', [])" class="text-[11px] font-semibold text-rose-500 hover:underline">Reset</button>
+                                        @endif
+                                    </div>
+                                    <div class="space-y-1">
+                                        @foreach($yearsList as $yVal)
+                                            <label wire:key="year-opt-{{ $yVal }}" class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-50 cursor-pointer text-xs font-medium text-slate-700 select-none transition">
+                                                <input type="checkbox" 
+                                                       value="{{ $yVal }}" 
+                                                       wire:model.live="selectedYears" 
+                                                       class="rounded border-slate-300 text-[#1B5A7A] focus:ring-[#1B5A7A] w-4 h-4" />
+                                                <span>Tahun {{ $yVal }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="text-center py-16 bg-slate-50 rounded-3xl border border-slate-200">
-                    <p class="text-slate-600 text-sm">Belum ada video testimoni aktif saat ini.</p>
-                </div>
-            @endif
-
-        </div>
-    </section>
-
-    <!-- 2. SECTION VALUE PROPOSITION (MENGAPA MEMILIH KAMI) -->
-    <!-- <section class="py-16 bg-white border-b border-slate-200/80">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                
-                <div class="bg-slate-50 border border-slate-200/80 p-6 rounded-3xl space-y-3 hover:border-blue-500 hover:shadow-lg transition">
-                    <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl font-semibold">
-                        💎
                     </div>
-                    <h3 class="text-base font-semibold text-slate-900">Harga Transparan</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Tanpa biaya tersembunyi! Semua rincian fasilitas include & exclude tertera jelas sebelum pemesanan.
-                    </p>
+
+                    <!-- Active Filter Bar & Reset Button -->
+                    @if($search !== '' || $selectedCountry !== 'all' || !empty($selectedMonths) || !empty($selectedYears))
+                        <div class="pt-3 border-t border-slate-200/80 flex items-center justify-between text-xs font-medium">
+                            <span class="text-slate-600">
+                                Menampilkan hasil filter paket tour (Total: <strong class="text-[#1B5A7A] font-extrabold">{{ $totalToursCount }}</strong>)
+                            </span>
+                            <button type="button" 
+                                    wire:click="resetFilters" 
+                                    class="text-rose-600 hover:text-rose-700 font-bold flex items-center gap-1 underline cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                                Reset Semua Filter
+                            </button>
+                        </div>
+                    @endif
+
                 </div>
-
-                <div class="bg-slate-50 border border-slate-200/80 p-6 rounded-3xl space-y-3 hover:border-blue-500 hover:shadow-lg transition">
-                    <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl font-semibold">
-                        👨‍✈️
-                    </div>
-                    <h3 class="text-base font-semibold text-slate-900">Tour Guide Profesional</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Didampingi pemandu wisata lokal ramah, bersertifikat, dan paham spot foto terbaik.
-                    </p>
-                </div>
-
-                <div class="bg-slate-50 border border-slate-200/80 p-6 rounded-3xl space-y-3 hover:border-blue-500 hover:shadow-lg transition">
-                    <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-2xl font-semibold">
-                        📸
-                    </div>
-                    <h3 class="text-base font-semibold text-slate-900">Free Dokumentasi Foto</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Abadikan setiap detik liburanmu dengan tim dokumentasi foto & video tanpa biaya tambahan.
-                    </p>
-                </div>
-
-                <div class="bg-slate-50 border border-slate-200/80 p-6 rounded-3xl space-y-3 hover:border-blue-500 hover:shadow-lg transition">
-                    <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl font-semibold">
-                        ⚡
-                    </div>
-                    <h3 class="text-base font-semibold text-slate-900">Respon WA Cepat</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Konsultasi dan bantuan instan kapan saja via Customer Service WhatsApp kami.
-                    </p>
-                </div>
-
-            </div>
-        </div>
-    </section> -->
-
-    <!-- 3. SECTION DESTINASI TERPOPULER -->
-    <section id="destinations" class="py-20 bg-slate-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-14 space-y-2">
-                <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-100 px-3 py-1 rounded-full border border-blue-200">Destinasi Pilihan</span>
-                <h2 class="text-3xl sm:text-4xl font-semibold text-slate-900">Destinasi Wisata Terfavorit</h2>
-                <p class="text-slate-600 text-sm">
-                    Pilih lokasi liburan impianmu dan nikmati promo eksklusif paket wisata kami.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                
-                <div wire:click="$set('selectedDestination', 'Labuan Bajo')" class="group relative h-72 rounded-3xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition duration-300">
-                    <img src="https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=800&q=80" 
-                         alt="Labuan Bajo" 
-                         class="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
-                    <div class="absolute bottom-5 left-5 right-5">
-                        <span class="text-[10px] uppercase font-semibold text-sky-300 tracking-wider block">Nusa Tenggara Timur</span>
-                        <h3 class="text-xl font-semibold text-white">Labuan Bajo</h3>
-                    </div>
-                </div>
-
-                <div wire:click="$set('selectedDestination', 'Raja Ampat')" class="group relative h-72 rounded-3xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition duration-300">
-                    <img src="https://images.unsplash.com/photo-1534008897995-27a23e859048?auto=format&fit=crop&w=800&q=80" 
-                         alt="Raja Ampat" 
-                         class="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
-                    <div class="absolute bottom-5 left-5 right-5">
-                        <span class="text-[10px] uppercase font-semibold text-sky-300 tracking-wider block">Papua Barat</span>
-                        <h3 class="text-xl font-semibold text-white">Raja Ampat</h3>
-                    </div>
-                </div>
-
-                <div wire:click="$set('selectedDestination', 'Bali')" class="group relative h-72 rounded-3xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition duration-300">
-                    <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80" 
-                         alt="Bali" 
-                         class="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
-                    <div class="absolute bottom-5 left-5 right-5">
-                        <span class="text-[10px] uppercase font-semibold text-sky-300 tracking-wider block">Pulau Dewata</span>
-                        <h3 class="text-xl font-semibold text-white">Bali & Penida</h3>
-                    </div>
-                </div>
-
-                <div wire:click="$set('selectedDestination', 'Bromo')" class="group relative h-72 rounded-3xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition duration-300">
-                    <img src="https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=800&q=80" 
-                         alt="Bromo" 
-                         class="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
-                    <div class="absolute bottom-5 left-5 right-5">
-                        <span class="text-[10px] uppercase font-semibold text-sky-300 tracking-wider block">Jawa Timur</span>
-                        <h3 class="text-xl font-semibold text-white">Gunung Bromo</h3>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- 4. SECTION PAKET WISATA (LIVEWIRE FILTER TABS PUTIH-BIRU) -->
-    <section id="tours" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            <!-- Header & Filter Tabs -->
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-                <div class="mx-auto mb-8 max-w-3xl text-center lg:mb-12"><p class="mb-5 text-[12px] font-semibold tracking-[.12em] text-[#1B5A7A] uppercase">Tour pilihan kami</p><h2 class="font-display text-[32px] leading-[1.15] font-semibold tracking-[-.025em] text-balance lg:text-[44px]">Tour yang pasti berangkat</h2><p class="mx-auto mt-5 max-w-xl text-[15px] leading-[1.7] font-normal text-[#525B6B] lg:text-[16px]">Jelajahi berbagai destinasi impian anda</p>
-                </div>
-                
             </div>
 
             @php
@@ -632,11 +647,21 @@
                         @endphp
 
                         <div onclick="window.location.href='/tour/{{ $tour->slug }}'" 
-                             class="group bg-white rounded-3xl border border-slate-200/90 shadow-md hover:shadow-2xl hover:shadow-sky-950/15 hover:border-sky-300 transition-all duration-300 flex flex-col overflow-hidden relative cursor-pointer"
+                             class="reveal-item reveal-up group bg-white rounded-3xl border border-slate-200/90 shadow-md hover:shadow-2xl hover:shadow-sky-950/15 hover:border-sky-300 transition-all duration-300 flex flex-col overflow-hidden relative cursor-pointer"
+                             style="transition-delay: {{ ($loop->index % 6) * 80 }}ms"
                              x-data="{ copied: false }">
                             
+                            @if($tour->status === 'penuh')
+                                <!-- Sold Out / Penuh Translucent Gray Overlay Layer -->
+                                <div class="absolute inset-0 bg-slate-900/40 backdrop-grayscale z-30 pointer-events-none rounded-3xl flex items-center justify-center">
+                                    <span class="px-5 py-2.5 rounded-2xl bg-rose-600/95 text-white font-black text-sm tracking-widest uppercase shadow-2xl border-2 border-white/40 transform -rotate-3">
+                                        KUOTA PENUH
+                                    </span>
+                                </div>
+                            @endif
+                            
                             <!-- 1. Top Season / Header Banner -->
-                            <div class="bg-[#E6F0F8] border-b border-sky-100 py-2.5 px-4 text-center font-extrabold text-xs sm:text-sm tracking-wider uppercase text-[#1B5A7A] flex items-center justify-center gap-2">
+                            <div class="bg-[#E6F0F8] border-b border-sky-100 py-2.5 px-4 text-center font-semibold text-xs sm:text-sm tracking-wider uppercase text-[#1B5A7A] flex items-center justify-center gap-2">
                                 <span>{{ $tour->season ? strtoupper($tour->season) . ' SEASON' : 'SUPER VACATION TOUR' }}</span>
                             </div>
 
@@ -658,11 +683,11 @@
 
                                 <!-- Top Left Badges: Duration & Status -->
                                 <div class="absolute top-3 left-3 flex flex-col gap-1.5 items-start z-10">
-                                    <span class="px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-[11px] font-bold text-slate-800 shadow-sm border border-white/60 flex items-center gap-1">
+                                    <span class="px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-[11px] font-semibold text-slate-800 shadow-sm border border-white/60 flex items-center gap-1">
                                         ⏱️ {{ $tour->duration }}
                                     </span>
                                     @if($tour->status === 'penuh')
-                                        <span class="px-2.5 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                                        <span class="px-2.5 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-semibold uppercase tracking-wider shadow-sm">
                                             Penuh
                                         </span>
                                     @endif
@@ -724,21 +749,21 @@
                                 <!-- Bottom Right Promo Oval Badge (Exact like reference image) -->
                                 @if($tour->promo_price && $tour->promo_price < $tour->price)
                                     <div class="absolute bottom-3 right-3 z-10">
-                                        <span class="px-4 py-1.5 rounded-full bg-[#0055D4] text-white font-extrabold text-xs sm:text-sm tracking-wide shadow-lg border border-white/20">
+                                        <span class="px-4 py-1.5 rounded-full bg-[#0055D4] text-white font-semibold text-xs sm:text-sm tracking-wide shadow-lg border border-white/20">
                                             Promo
                                         </span>
                                     </div>
                                 @endif
                             </div>
 
-                            <!-- 3. Middle Section: Title & Date (Yellow/Amber Banner) -->
-                            <div class="bg-[#FA9E0B] p-4 text-center space-y-1.5">
-                                <h3 class="font-extrabold text-white text-base sm:text-lg uppercase tracking-wide leading-tight line-clamp-2">
+                            <!-- 3. Middle Section: Title & Date (Yellow/Amber Banner - Flex 1 to eliminate white gap) -->
+                            <div class="bg-[#FA9E0B] p-4 text-center space-y-1.5 flex-1 flex flex-col justify-center items-center">
+                                <h3 class="font-semibold text-white text-base sm:text-lg uppercase tracking-wide leading-tight line-clamp-2">
                                     {{ $tour->title }}
                                 </h3>
 
                                 @if($tour->start_date)
-                                    <div class="text-[#0F355C] font-extrabold text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1 mt-0.5">
+                                    <div class="text-[#0F355C] font-semibold text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1 mt-0.5">
                                         <svg class="w-3.5 h-3.5 text-[#0F355C] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
@@ -748,11 +773,11 @@
                             </div>
 
                             <!-- 4. Bottom Section: Route Highlights & Big Price (Dark Blue Banner) -->
-                            <div class="bg-[#1B5A7A] p-4 text-white flex items-center justify-between gap-3 mt-auto">
+                            <div class="bg-[#1B5A7A] p-4 text-white flex items-center justify-between gap-3 shrink-0">
                                 <!-- Left Column: Destination / Route -->
-                                <div class="flex-1 min-w-0">
+                                <div class="flex-1 min-w-0 flex flex-col justify-center min-h-[2.5rem]">
                                     <span class="text-[10px] uppercase font-semibold text-sky-200 tracking-wider block">Destinasi</span>
-                                    <p class="font-extrabold text-xs sm:text-sm text-white line-clamp-2 uppercase leading-tight mt-0.5">
+                                    <p class="font-semibold text-xs sm:text-sm text-white line-clamp-2 uppercase leading-tight mt-0.5">
                                         {{ $tour->destination }}
                                     </p>
                                 </div>
@@ -761,7 +786,7 @@
                                 <div class="border-l border-white/25 h-10 shrink-0"></div>
 
                                 <!-- Right Column: Pricing Display -->
-                                <div class="text-right shrink-0">
+                                <div class="text-right shrink-0 flex flex-col justify-center">
                                     @if($oldPriceData)
                                         <span class="text-[11px] text-white/70 line-through font-semibold block leading-none mb-0.5">
                                             {{ $oldPriceData['num'] }} {{ $oldPriceData['unit'] }}
@@ -770,7 +795,7 @@
                                     <div class="text-2xl sm:text-3xl font-black text-white leading-none tracking-tight">
                                         {{ $priceData['num'] }}
                                     </div>
-                                    <span class="text-[10px] font-extrabold text-sky-100 uppercase tracking-wider block mt-1">
+                                    <span class="text-[10px] font-semibold text-sky-100 uppercase tracking-wider block mt-1">
                                         {{ $priceData['unit'] }}
                                     </span>
                                 </div>
@@ -779,60 +804,290 @@
                         </div>
                     @endforeach
                 </div>
+
+                <!-- Button Lihat Semua Tour Halaman Tour Schedule -->
+                <div class="mt-12 text-center reveal-item reveal-up" style="transition-delay: 200ms">
+                    <a href="{{ route('tour-schedule') }}" 
+                       wire:navigate 
+                       class="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-[#1B5A7A] hover:bg-[#13425a] text-white text-sm font-normal shadow-lg hover:shadow-xl transition-all active:scale-95 cursor-pointer">
+                        <span>Lihat Semua Jadwal Tour ({{ $totalToursCount }} Paket)</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </a>
+                </div>
             @else
-                <div class="text-center py-20 bg-slate-50 rounded-3xl border border-slate-200 space-y-3">
-                    <p class="text-slate-600 text-sm">Tidak ada paket wisata yang sesuai dengan pencarian Anda.</p>
-                    <button type="button" wire:click="resetFilters" class="text-xs text-blue-600 font-semibold underline">Tampilkan Semua Paket</button>
+                <div class="text-center py-20 bg-slate-50 rounded-3xl border border-slate-200 space-y-3 reveal-item reveal-fade">
+                    <p class="text-slate-600 text-sm">Tidak ada paket wisata yang sesuai dengan pencarian atau filter Anda.</p>
+                    <button type="button" wire:click="resetFilters" class="text-xs text-blue-600 font-semibold underline cursor-pointer">Reset Semua Filter</button>
+                </div>
+            @endif
+
+        </div>
+    </section>
+    <!-- 6. SECTION TESTIMONI (AVENIR TRAVEL STYLE: 3 DATA PER TAMPILAN & BISA DIGESER) -->
+    <section id="testimonials" 
+             x-data="{
+                isDown: false,
+                startX: 0,
+                scrollLeft: 0,
+                canScrollLeft: false,
+                canScrollRight: true,
+                init() {
+                    this.$nextTick(() => this.updateScrollState());
+                },
+                updateScrollState() {
+                    const el = this.$refs.testimonialSlider;
+                    if (!el) return;
+                    this.canScrollLeft = el.scrollLeft > 10;
+                    this.canScrollRight = el.scrollLeft < (el.scrollWidth - el.clientWidth - 15);
+                },
+                scrollNext() {
+                    const el = this.$refs.testimonialSlider;
+                    const card = el.querySelector('.snap-start');
+                    const scrollAmount = card ? card.offsetWidth + 32 : 380;
+                    el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                    setTimeout(() => this.updateScrollState(), 350);
+                },
+                scrollPrev() {
+                    const el = this.$refs.testimonialSlider;
+                    const card = el.querySelector('.snap-start');
+                    const scrollAmount = card ? card.offsetWidth + 32 : 380;
+                    el.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                    setTimeout(() => this.updateScrollState(), 350);
+                },
+                startDrag(e) {
+                    this.isDown = true;
+                    this.startX = (e.pageX || (e.touches && e.touches[0].pageX)) - this.$refs.testimonialSlider.offsetLeft;
+                    this.scrollLeft = this.$refs.testimonialSlider.scrollLeft;
+                },
+                stopDrag() {
+                    this.isDown = false;
+                    this.updateScrollState();
+                },
+                onDrag(e) {
+                    if (!this.isDown) return;
+                    e.preventDefault();
+                    const x = (e.pageX || (e.touches && e.touches[0].pageX)) - this.$refs.testimonialSlider.offsetLeft;
+                    const walk = (x - this.startX) * 1.3;
+                    this.$refs.testimonialSlider.scrollLeft = this.scrollLeft - walk;
+                    this.updateScrollState();
+                }
+             }"
+             class="reveal-group py-20 sm:py-28 bg-white border-t border-slate-100 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Centered Minimalist Header -->
+            <div class="text-center max-w-3xl mx-auto mb-14 sm:mb-18 reveal-item reveal-up">
+                <span class="text-xs font-bold tracking-[0.25em] text-[#1B5A7A] uppercase block mb-3.5">
+                    TESTIMONIALS
+                </span>
+                <h2 class="text-4xl sm:text-5xl lg:text-6xl font-semibold text-slate-900 tracking-tight leading-[1.12] max-w-xl mx-auto font-display">
+                    Cerita dari yang<br>sudah pulang
+                </h2>
+            </div>
+
+            @if($testimonials->count() > 0)
+                <!-- Horizontal Slider with Exactly 3 Items Per View on Desktop -->
+                <div class="relative reveal-item reveal-up" style="transition-delay: 150ms">
+                    
+                    <div x-ref="testimonialSlider" 
+                         @scroll.debounce.50ms="updateScrollState()"
+                         @mousedown="startDrag($event)"
+                         @mouseleave="stopDrag()"
+                         @mouseup="stopDrag()"
+                         @mousemove="onDrag($event)"
+                         class="flex gap-8 overflow-x-auto snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden pb-4 pt-2 -mx-4 px-4 sm:mx-0 sm:px-0 cursor-grab active:cursor-grabbing">
+                        @foreach($testimonials as $testimonial)
+                            <div class="snap-start shrink-0 w-[85%] sm:w-[calc((100%-32px)/2)] lg:w-[calc((100%-64px)/3)] border-t border-slate-200/90 pt-8 sm:pt-10 flex flex-col justify-between group select-none">
+                                
+                                <!-- Star Rating & Review Quote -->
+                                <div>
+                                    <!-- Orange Star Rating (5 Stars) -->
+                                    <div class="flex items-center gap-1 text-[#E85D04] text-xs sm:text-sm mb-4">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            @if($i <= ($testimonial->rating ?? 5))
+                                                <span>★</span>
+                                            @else
+                                                <span class="text-slate-200">★</span>
+                                            @endif
+                                        @endfor
+                                    </div>
+
+                                    <!-- Review Text in Clean Quotes -->
+                                    <blockquote class="text-[13.5px] sm:text-[14.5px] text-slate-700 leading-relaxed font-normal mb-8">
+                                        &ldquo;{{ $testimonial->story ?? $testimonial->title }}&rdquo;
+                                    </blockquote>
+                                </div>
+
+                                <!-- Traveler Avatar & Info Footer -->
+                                <div class="flex items-center gap-3 pt-2 mt-auto">
+                                    <!-- Round Avatar / Initial Badge -->
+                                    @php
+                                        $colors = [
+                                            ['bg' => '#EDE9FE', 'text' => '#6D28D9'], // Purple
+                                            ['bg' => '#E0F2FE', 'text' => '#0369A1'], // Sky
+                                            ['bg' => '#E0E7FF', 'text' => '#4338CA'], // Indigo
+                                            ['bg' => '#FEF3C7', 'text' => '#B45309'], // Amber
+                                            ['bg' => '#DCFCE7', 'text' => '#15803D'], // Green
+                                            ['bg' => '#FCE7F3', 'text' => '#BE185D'], // Pink
+                                        ];
+                                        $palette = $colors[$loop->index % count($colors)];
+                                        
+                                        $nameParts = explode(' ', trim($testimonial->name ?? 'User'));
+                                        $initials = '';
+                                        foreach(array_slice($nameParts, 0, 2) as $p) {
+                                            $initials .= strtoupper(substr($p, 0, 1));
+                                        }
+                                    @endphp
+
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden shadow-2xs"
+                                         style="background-color: {{ $palette['bg'] }}; color: {{ $palette['text'] }};">
+                                        @if($testimonial->avatar)
+                                            <img src="{{ asset('storage/' . $testimonial->avatar) }}" alt="{{ $testimonial->name }}" class="w-full h-full object-cover rounded-full" />
+                                        @else
+                                            <span>{{ $initials ?: 'U' }}</span>
+                                        @endif
+                                    </div>
+
+                                    <!-- Name & Source Subtitle -->
+                                    <div class="min-w-0">
+                                        <h4 class="font-bold text-xs sm:text-sm text-slate-900 leading-tight truncate">
+                                            {{ $testimonial->name ?? 'Traveler Super Vacation' }}
+                                        </h4>
+                                        <p class="text-[10px] sm:text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-0.5 truncate">
+                                            {{ $testimonial->trip_date ? strtoupper($testimonial->trip_date) . ' · ' : '' }}ULASAN GOOGLE
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <!-- Clean Slider Controls (Centered Below) -->
+                    @if($testimonials->count() > 3)
+                        <div class="flex items-center justify-center gap-3 mt-10 reveal-item reveal-fade" style="transition-delay: 250ms">
+                            <button @click="scrollPrev()" 
+                                    type="button" 
+                                    title="Geser Kiri"
+                                    class="w-10 h-10 rounded-full bg-slate-50 hover:bg-[#1B5A7A] hover:text-white text-slate-700 border border-slate-200 flex items-center justify-center transition-all duration-200 shadow-2xs focus:outline-none active:scale-95 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </button>
+                            <button @click="scrollNext()" 
+                                    type="button" 
+                                    title="Geser Kanan"
+                                    class="w-10 h-10 rounded-full bg-slate-50 hover:bg-[#1B5A7A] hover:text-white text-slate-700 border border-slate-200 flex items-center justify-center transition-all duration-200 shadow-2xs focus:outline-none active:scale-95 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
+                        </div>
+                    @endif
+
+                </div>
+            @else
+                <div class="text-center py-16 bg-slate-50 rounded-3xl border border-slate-100 reveal-item reveal-fade">
+                    <p class="text-slate-500 text-sm">Belum ada ulasan yang ditampilkan saat ini.</p>
                 </div>
             @endif
 
         </div>
     </section>
 
-    <!-- 5. SECTION 4 LANGKAH PEMESANAN -->
-    <!-- <section class="py-20 bg-slate-50 border-t border-slate-200/80">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-16 space-y-2">
-                <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-100 px-3 py-1 rounded-full border border-blue-200">Cara Pemesanan</span>
-                <h2 class="text-3xl sm:text-4xl font-semibold text-slate-900">4 Langkah Mudah Liburan</h2>
+    <!-- 3. SECTION ARTIKEL & EDUKASI WISATA -->
+    <section id="articles" class="reveal-group py-20 bg-slate-50 border-t border-slate-200/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-item reveal-up">
+                <div class="space-y-2 max-w-2xl">
+                    <p class="text-[12px] font-semibold tracking-[.12em] text-[#1B5A7A] uppercase">Artikel & Edukasi</p>
+                    <h2 class="font-display text-3xl sm:text-4xl font-semibold tracking-[-.025em] text-slate-900">
+                        Wawasan & Tips Liburan
+                    </h2>
+                    <p class="text-sm text-[#525B6B] leading-relaxed">
+                        Temukan info visa terbaru, tips persiapan tour, dan panduan perjalanan terlengkap dari tim ahli kami.
+                    </p>
+                </div>
+
+                <a href="{{ route('articles.index') }}" 
+                   wire:navigate 
+                   class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-slate-200 text-xs font-bold text-[#1B5A7A] shadow-xs hover:bg-[#1B5A7A] hover:text-white transition-all cursor-pointer shrink-0">
+                    <span>Lihat Semua Artikel</span>
+                    <span>➔</span>
+                </a>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                
-                <div class="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm space-y-3 relative">
-                    <div class="w-10 h-10 rounded-full bg-blue-600 text-white font-semibold text-sm flex items-center justify-center">1</div>
-                    <h3 class="text-base font-semibold text-slate-900">Pilih Paket Wisata</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">Tentukan destinasi dan jenis paket trip sesuai dengan keinginanmu.</p>
-                </div>
+            <!-- Articles Cards Grid -->
+            @if(isset($articles) && $articles->count() > 0)
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    @foreach($articles as $article)
+                        <article onclick="window.location.href='/article/{{ $article->slug }}'" 
+                                 class="reveal-item reveal-up group bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:shadow-sky-950/10 hover:border-sky-300 transition-all duration-300 flex flex-col overflow-hidden cursor-pointer"
+                                 style="transition-delay: {{ ($loop->index % 3) * 120 + 100 }}ms">
+                            
+                            <!-- Thumbnail Image Container -->
+                            <div class="relative h-48 overflow-hidden bg-slate-100">
+                                @if($article->thumbnail)
+                                    <img src="{{ asset('storage/' . $article->thumbnail) }}" 
+                                         alt="{{ $article->title }}" 
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+                                @else
+                                    <div class="w-full h-full bg-gradient-to-br from-sky-500 to-[#1B5A7A] flex flex-col items-center justify-center p-6 text-white group-hover:scale-105 transition-transform duration-700 ease-out">
+                                        <svg class="w-10 h-10 mb-1.5 text-sky-200/80 stroke-[1.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                        </svg>
+                                        <span class="text-[11px] font-semibold tracking-wider uppercase text-sky-100">Travel Guide</span>
+                                    </div>
+                                @endif
 
-                <div class="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm space-y-3 relative">
-                    <div class="w-10 h-10 rounded-full bg-blue-600 text-white font-semibold text-sm flex items-center justify-center">2</div>
-                    <h3 class="text-base font-semibold text-slate-900">Konsultasi via WA</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">Hubungi admin WhatsApp untuk verifikasi tanggal & rincian kuota.</p>
-                </div>
+                                <!-- Category Badge -->
+                                <div class="absolute top-3 left-3 z-10">
+                                    <span class="px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[11px] font-bold text-[#1B5A7A] shadow-sm border border-white/60">
+                                        {{ $article->category }}
+                                    </span>
+                                </div>
+                            </div>
 
-                <div class="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm space-y-3 relative">
-                    <div class="w-10 h-10 rounded-full bg-blue-600 text-white font-semibold text-sm flex items-center justify-center">3</div>
-                    <h3 class="text-base font-semibold text-slate-900">DP & Konfirmasi</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">Bayar DP aman dan terima e-voucher konfirmasi dari TravelGo.</p>
-                </div>
+                            <!-- Content Area -->
+                            <div class="p-5 flex-1 flex flex-col justify-between space-y-3">
+                                <div class="space-y-1.5">
+                                    <div class="flex items-center gap-2.5 text-[11px] font-semibold text-slate-400">
+                                        <span>📅 {{ $article->published_at ? $article->published_at->format('d M Y') : $article->created_at->format('d M Y') }}</span>
+                                        <span>•</span>
+                                        <span>⏱️ {{ $article->reading_time }}</span>
+                                    </div>
 
-                <div class="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm space-y-3 relative">
-                    <div class="w-10 h-10 rounded-full bg-emerald-500 text-white font-semibold text-sm flex items-center justify-center">4</div>
-                    <h3 class="text-base font-semibold text-slate-900">Selamat Berlibur!</h3>
-                    <p class="text-xs text-slate-600 leading-relaxed">Nikmati perjalanan seru dan dokumentasi foto gratis selama trip.</p>
-                </div>
+                                    <h3 class="font-bold text-slate-900 text-base leading-snug group-hover:text-[#1B5A7A] transition-colors line-clamp-2">
+                                        {{ $article->title }}
+                                    </h3>
 
-            </div>
+                                    <p class="text-xs text-slate-500 leading-relaxed line-clamp-2">
+                                        {{ $article->excerpt }}
+                                    </p>
+                                </div>
+
+                                <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                                    <span class="font-semibold text-slate-600">{{ $article->author }}</span>
+                                    <span class="font-bold text-[#1B5A7A] group-hover:translate-x-1 transition-transform flex items-center gap-1">
+                                        Baca ➔
+                                    </span>
+                                </div>
+                            </div>
+
+                        </article>
+                    @endforeach
+                </div>
+            @endif
+
         </div>
-    </section> -->
-
-     
-
+    </section>
 
     <!-- 7. SECTION CONSULTATION CTA (CLEAN PROFESSIONAL STYLE) -->
-    <section class="py-20 sm:py-24 bg-white border-t border-slate-100">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <section class="reveal-group py-20 sm:py-24 bg-white border-t border-slate-100">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center reveal-item reveal-up">
             
             <!-- Category Tag -->
             <p class="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-[#1b5a7a] mb-6">
@@ -869,4 +1124,57 @@
 
         </div>
     </section>
+
+    <!-- JAVASCRIPT SCROLL INTERSECTION OBSERVER -->
+    <script>
+        (function() {
+            function setupScrollAnimations() {
+                if (!('IntersectionObserver' in window)) {
+                    document.querySelectorAll('.reveal-item, .reveal-group').forEach(el => el.classList.add('is-revealed'));
+                    return;
+                }
+
+                const observer = new IntersectionObserver((entries, obs) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-revealed');
+                            obs.unobserve(entry.target);
+                        }
+                    });
+                }, {
+                    threshold: 0.08,
+                    rootMargin: '0px 0px -40px 0px'
+                });
+
+                document.querySelectorAll('.reveal-item, .reveal-group').forEach(el => {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top < window.innerHeight * 0.95 && rect.bottom > 0) {
+                        el.classList.add('is-revealed');
+                    } else {
+                        observer.observe(el);
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', setupScrollAnimations);
+            } else {
+                setupScrollAnimations();
+            }
+
+            document.addEventListener('livewire:navigated', () => {
+                setTimeout(setupScrollAnimations, 60);
+            });
+
+            document.addEventListener('livewire:initialized', () => {
+                if (typeof Livewire !== 'undefined' && Livewire.hook) {
+                    Livewire.hook('commit', ({ succeed }) => {
+                        succeed(() => {
+                            setTimeout(setupScrollAnimations, 50);
+                        });
+                    });
+                }
+            });
+        })();
+    </script>
 </div>

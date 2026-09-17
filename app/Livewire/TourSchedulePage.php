@@ -2,38 +2,91 @@
 
 namespace App\Livewire;
 
-use App\Models\Article;
-use App\Models\Banner;
 use App\Models\Country;
-use App\Models\Testimonial;
 use App\Models\Tour;
-use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithPagination;
 
-class HomePage extends Component
+class TourSchedulePage extends Component
 {
+    use WithPagination;
+
+    #[Url]
     public string $search = '';
+
+    #[Url]
     public string $selectedCategory = 'all'; // 'all', 'open_trip', 'private_trip'
+
+    #[Url]
     public string $selectedDestination = 'all';
+
+    #[Url]
     public string $selectedCountry = 'all';
-    public string $selectedMonth = 'all';
+
+    #[Url]
     public array $selectedMonths = [];
+
+    #[Url]
     public array $selectedYears = [];
-    public int $limit = 6;
+
+    #[Url]
+    public string $selectedMonth = 'all';
+
+    public int $perPage = 9;
+
+    public function mount(): void
+    {
+        // Tangkap selectedMonth jika dikirim dari URL/Homepage (format '2026-09' atau '9')
+        if ($this->selectedMonth !== 'all' && !empty($this->selectedMonth)) {
+            if (str_contains($this->selectedMonth, '-')) {
+                $parts = explode('-', $this->selectedMonth);
+                $year = (int)$parts[0];
+                $month = (int)$parts[1];
+                if (!in_array((string)$month, $this->selectedMonths)) {
+                    $this->selectedMonths[] = (string)$month;
+                }
+                if (!in_array((string)$year, $this->selectedYears)) {
+                    $this->selectedYears[] = (string)$year;
+                }
+            } else {
+                $month = (int)$this->selectedMonth;
+                if (!in_array((string)$month, $this->selectedMonths)) {
+                    $this->selectedMonths[] = (string)$month;
+                }
+            }
+        }
+    }
+
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedSelectedCountry(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedSelectedMonths(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedSelectedYears(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedSelectedCategory(): void
+    {
+        $this->resetPage();
+    }
 
     public function selectCategory(string $category): void
     {
         $this->selectedCategory = $category;
-    }
-
-    public function showAllTours(): void
-    {
-        $this->limit = 999;
-    }
-
-    public function showLessTours(): void
-    {
-        $this->limit = 6;
+        $this->resetPage();
     }
 
     public function resetFilters(): void
@@ -45,29 +98,11 @@ class HomePage extends Component
         $this->selectedMonth = 'all';
         $this->selectedMonths = [];
         $this->selectedYears = [];
-        $this->limit = 6;
-    }
-
-    public function searchTours(): mixed
-    {
-        $params = [];
-        if ($this->selectedCountry !== 'all' && !empty($this->selectedCountry)) {
-            $params['selectedCountry'] = $this->selectedCountry;
-        }
-        if ($this->selectedMonth !== 'all' && !empty($this->selectedMonth)) {
-            $params['selectedMonth'] = $this->selectedMonth;
-        }
-
-        return $this->redirectRoute('tour-schedule', $params, navigate: true);
+        $this->resetPage();
     }
 
     public function render()
     {
-        $banners = Banner::where('is_active', true)
-            ->orderBy('sort_order', 'asc')
-            ->latest()
-            ->get();
-
         $monthsList = [
             '1'  => 'Januari',
             '2'  => 'Februari',
@@ -104,7 +139,7 @@ class HomePage extends Component
                       ->orWhere('title', 'like', '%' . $countryName . '%');
                 });
             })
-            ->when($this->selectedMonth !== 'all', function ($query) use ($monthsList) {
+            ->when($this->selectedMonth !== 'all' && empty($this->selectedMonths), function ($query) use ($monthsList) {
                 if (str_contains($this->selectedMonth, '-')) {
                     $parts = explode('-', $this->selectedMonth);
                     $mNum = (int) $parts[1];
@@ -172,53 +207,22 @@ class HomePage extends Component
         }
 
         $totalToursCount = (clone $toursQuery)->count();
-        $tours = $toursQuery->latest()->take($this->limit)->get();
-
-        // Ambil daftar destinasi unik untuk Hero section
-        $destinations = Tour::select('destination')
-            ->distinct()
-            ->pluck('destination');
+        $tours = $toursQuery->latest()->paginate($this->perPage);
 
         $countries = Country::orderBy('name', 'asc')->get();
-
-        $months = [
-            '2026-09' => 'September 2026',
-            '2026-10' => 'Oktober 2026',
-            '2026-11' => 'November 2026',
-            '2026-12' => 'Desember 2026',
-            '2027-01' => 'Januari 2027',
-            '2027-02' => 'Februari 2027',
-            '2027-03' => 'Maret 2027',
-            '2027-04' => 'April 2027',
-            '2027-05' => 'Mei 2027',
-        ];
 
         // Tahun Berjalan & +1 Tahun
         $currentYear = (int)date('Y');
         $yearsList = [$currentYear, $currentYear + 1];
 
-        $testimonials = Testimonial::where('is_active', true)
-            ->orderBy('sort_order', 'asc')
-            ->latest()
-            ->take(10)
-            ->get();
-
-        $articles = Article::where('is_published', true)
-            ->orderBy('published_at', 'desc')
-            ->take(3)
-            ->get();
-
-        return view('livewire.home-page', [
-            'banners'         => $banners,
+        return view('livewire.tour-schedule-page', [
             'tours'           => $tours,
             'totalToursCount' => $totalToursCount,
-            'destinations'    => $destinations,
             'countries'       => $countries,
-            'months'          => $months,
             'monthsList'      => $monthsList,
             'yearsList'       => $yearsList,
-            'testimonials'    => $testimonials,
-            'articles'        => $articles,
+        ])->layout('components.layouts.app', [
+            'title' => 'Jadwal Tour & Keberangkatan | TravelGo'
         ]);
     }
 }

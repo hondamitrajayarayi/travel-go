@@ -30,7 +30,7 @@
                     mobileAboutOpen: false,
                     aboutDropdownOpen: false, 
                     scrolled: false,
-                    activeNav: '{{ request()->routeIs('about') ? 'about' : (request()->routeIs('contact') ? 'contact' : (request()->routeIs('terms') ? 'terms' : (request()->routeIs('faq') ? 'faq' : (request()->routeIs('private-trip') ? 'private-trip' : 'home')))) }}',
+                    activeNav: '{{ request()->routeIs('about') ? 'about' : (request()->routeIs('contact') ? 'contact' : (request()->routeIs('terms') ? 'terms' : (request()->routeIs('faq') ? 'faq' : (request()->routeIs('private-trip') ? 'private-trip' : (request()->routeIs('tour-schedule') ? 'tour-schedule' : (request()->routeIs('articles.*') ? 'articles' : 'home')))))) }}',
                     init() {
                         const updateScroll = () => {
                             this.scrolled = window.pageYOffset > 10;
@@ -119,7 +119,7 @@
                         </div>
 
                         <!-- 3. TOUR SCHEDULE -->
-                        <a href="{{ route('home') }}#tours" 
+                        <a href="{{ route('tour-schedule') }}" 
                            wire:navigate
                            @click="activeNav = 'tour-schedule'" 
                            :class="activeNav === 'tour-schedule' ? 'text-[#3372A1] font-semibold' : 'text-slate-600 hover:text-[#3372A1] font-normal'" 
@@ -135,6 +135,15 @@
                            class="py-1 transition-colors duration-200 uppercase">
                             Private Trip
                         </a>
+
+                        <!-- 5. ARTIKEL & EDUKASI -->
+                        <!-- <a href="{{ route('articles.index') }}" 
+                           wire:navigate
+                           @click="activeNav = 'articles'" 
+                           :class="activeNav === 'articles' ? 'text-[#3372A1] font-semibold' : 'text-slate-600 hover:text-[#3372A1] font-normal'" 
+                           class="py-1 transition-colors duration-200 uppercase">
+                            Artikel & Tips
+                        </a> -->
 
                         <!-- 5. CONTACT -->
                         <a href="{{ route('contact') }}" 
@@ -280,7 +289,7 @@
 
                         <!-- 3. TOUR SCHEDULE -->
                         <div class="border-b border-slate-100/80">
-                            <a href="{{ route('home') }}#tours" 
+                            <a href="{{ route('tour-schedule') }}" 
                                wire:navigate
                                @click="activeNav = 'tour-schedule'; mobileMenuOpen = false" 
                                :class="activeNav === 'tour-schedule' ? 'text-[#3372A1] font-semibold' : 'text-slate-800 font-medium hover:text-[#3372A1]'"
@@ -299,6 +308,18 @@
                                class="flex items-center justify-between py-3.5 text-[15px] uppercase tracking-wider transition">
                                 <span>PRIVATE TRIP</span>
                                 <span x-show="activeNav === 'private-trip'" class="w-2 h-2 rounded-full bg-[#3372A1]"></span>
+                            </a>
+                        </div>
+
+                        <!-- 5. ARTIKEL -->
+                        <div class="border-b border-slate-100/80">
+                            <a href="{{ route('articles.index') }}" 
+                               wire:navigate
+                               @click="activeNav = 'articles'; mobileMenuOpen = false" 
+                               :class="activeNav === 'articles' ? 'text-[#3372A1] font-semibold' : 'text-slate-800 font-medium hover:text-[#3372A1]'"
+                               class="flex items-center justify-between py-3.5 text-[15px] uppercase tracking-wider transition">
+                                <span>ARTIKEL & TIPS</span>
+                                <span x-show="activeNav === 'articles'" class="w-2 h-2 rounded-full bg-[#3372A1]"></span>
                             </a>
                         </div>
 
@@ -404,13 +425,18 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('home') }}#tours" wire:navigate class="hover:text-[#3372A1] transition-colors duration-150 inline-flex items-center gap-1.5">
+                                <a href="{{ route('tour-schedule') }}" wire:navigate class="hover:text-[#3372A1] transition-colors duration-150 inline-flex items-center gap-1.5">
                                     <span>TOUR SCHEDULE</span>
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('private-trip') }}" wire:navigate class="hover:text-[#3372A1] transition-colors duration-150 inline-flex items-center gap-1.5">
                                     <span>PRIVATE TRIP</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('articles.index') }}" wire:navigate class="hover:text-[#3372A1] transition-colors duration-150 inline-flex items-center gap-1.5">
+                                    <span>ARTIKEL & TIPS</span>
                                 </a>
                             </li>
                             <li>
