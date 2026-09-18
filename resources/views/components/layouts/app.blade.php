@@ -4,7 +4,53 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>{{ $title ?? 'TravelGo - Paket Wisata & Open Trip Terpercaya' }}</title>
+        @php
+            use App\Models\Setting;
+            $seoTitle       = isset($title) ? $title : Setting::get('seo_home_title', 'Super Vacation – Paket Wisata & Open Trip Terpercaya');
+            $seoDescription = isset($metaDescription) ? $metaDescription : Setting::get('seo_home_description', 'Super Vacation menyediakan paket wisata dan open trip ke berbagai destinasi impian dengan harga terjangkau dan pelayanan profesional.');
+            $seoKeywords    = isset($metaKeywords) ? $metaKeywords : Setting::get('seo_home_keywords', 'paket wisata, open trip, tour murah, travel agent');
+            $seoRobots      = isset($metaRobots) ? $metaRobots : Setting::get('seo_robots', 'index, follow');
+            $seoOgTitle     = isset($ogTitle) ? $ogTitle : Setting::get('seo_og_title', $seoTitle);
+            $seoOgDesc      = isset($ogDescription) ? $ogDescription : Setting::get('seo_og_description', $seoDescription);
+            $seoOgImage     = isset($ogImage) ? $ogImage : Setting::get('seo_og_image', asset('images/logo/LOGO HORIZONTAL.png'));
+            $siteName       = Setting::get('seo_site_name', 'Super Vacation');
+            $canonicalUrl   = request()->url();
+        @endphp
+
+        {{-- ====== PRIMARY META TAGS ====== --}}
+        <title>{{ $seoTitle }}</title>
+        <meta name="title" content="{{ $seoTitle }}">
+        <meta name="description" content="{{ $seoDescription }}">
+        @if($seoKeywords)
+        <meta name="keywords" content="{{ $seoKeywords }}">
+        @endif
+        <meta name="robots" content="{{ $seoRobots }}">
+        <meta name="language" content="Indonesian">
+        <meta name="author" content="{{ $siteName }}">
+        <link rel="canonical" href="{{ $canonicalUrl }}">
+
+        {{-- ====== OPEN GRAPH / FACEBOOK ====== --}}
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ $canonicalUrl }}">
+        <meta property="og:site_name" content="{{ $siteName }}">
+        <meta property="og:title" content="{{ $seoOgTitle }}">
+        <meta property="og:description" content="{{ $seoOgDesc }}">
+        @if($seoOgImage)
+        <meta property="og:image" content="{{ $seoOgImage }}">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+        <meta property="og:image:alt" content="{{ $seoOgTitle }}">
+        @endif
+        <meta property="og:locale" content="id_ID">
+
+        {{-- ====== TWITTER CARD ====== --}}
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ $seoOgTitle }}">
+        <meta name="twitter:description" content="{{ $seoOgDesc }}">
+        @if($seoOgImage)
+        <meta name="twitter:image" content="{{ $seoOgImage }}">
+        @endif
+
         <link rel="icon" href="{{ asset('images/logo/LOGO.png') }}" type="image/png">
 
         <!-- Google Fonts: Poppins -->

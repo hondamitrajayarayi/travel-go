@@ -26,6 +26,11 @@ class Tour extends Model
         'description',
         'thumbnail',
         'file_itinerary',
+        // SEO
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
+        'og_image',
     ];
 
     protected $casts = [

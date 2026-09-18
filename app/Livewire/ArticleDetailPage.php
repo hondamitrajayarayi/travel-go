@@ -43,7 +43,17 @@ class ArticleDetailPage extends Component
         return view('livewire.article-detail-page', [
             'relatedArticles' => $relatedArticles,
         ])->layout('components.layouts.app', [
-            'title' => $this->article->title . ' | TravelGo'
+            'title'           => ($this->article->meta_title ?: $this->article->title) . ' | Super Vacation',
+            'metaDescription' => $this->article->meta_description
+                                    ?: ($this->article->excerpt
+                                        ?: strip_tags(substr($this->article->content ?? '', 0, 160))),
+            'metaKeywords'    => $this->article->meta_keywords,
+            'ogTitle'         => $this->article->meta_title ?: $this->article->title,
+            'ogDescription'   => $this->article->meta_description
+                                    ?: ($this->article->excerpt
+                                        ?: strip_tags(substr($this->article->content ?? '', 0, 160))),
+            'ogImage'         => $this->article->og_image
+                                    ?: ($this->article->thumbnail ? asset('storage/' . $this->article->thumbnail) : null),
         ]);
     }
 }

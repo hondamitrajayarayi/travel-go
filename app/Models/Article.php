@@ -21,6 +21,11 @@ class Article extends Model
         'published_at',
         'is_published',
         'views_count',
+        // SEO
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
+        'og_image',
     ];
 
     protected $casts = [

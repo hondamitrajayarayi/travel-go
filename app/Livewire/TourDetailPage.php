@@ -48,7 +48,15 @@ class TourDetailPage extends Component
         return view('livewire.tour-detail-page', [
             'relatedTours' => $relatedTours,
         ])->layout('components.layouts.app', [
-            'title' => $this->tour->title . ' | TravelGo'
+            'title'           => ($this->tour->meta_title ?: $this->tour->title) . ' | Super Vacation',
+            'metaDescription' => $this->tour->meta_description
+                                    ?: strip_tags(substr($this->tour->description ?? '', 0, 160)),
+            'metaKeywords'    => $this->tour->meta_keywords,
+            'ogTitle'         => $this->tour->meta_title ?: $this->tour->title,
+            'ogDescription'   => $this->tour->meta_description
+                                    ?: strip_tags(substr($this->tour->description ?? '', 0, 160)),
+            'ogImage'         => $this->tour->og_image
+                                    ?: ($this->tour->thumbnail ? asset('storage/' . $this->tour->thumbnail) : null),
         ]);
     }
 }

@@ -1,5 +1,58 @@
 <div class="pt-24 pb-20 bg-slate-50 min-h-screen">
-    
+
+    {{-- ===== JSON-LD STRUCTURED DATA (SEO Rich Snippets untuk Google) ===== --}}
+    @once
+    @php
+        $seoArticleTitle = $article->meta_title ?: $article->title;
+        $seoArticleDesc  = $article->meta_description
+                            ?: ($article->excerpt ?: strip_tags(substr($article->content ?? '', 0, 300)));
+        $seoArticleImage = $article->og_image
+                            ?: ($article->thumbnail ? asset('storage/' . $article->thumbnail) : '');
+        $seoArticleUrl   = request()->url();
+
+        $articleSchema = [
+            '@context'          => 'https://schema.org',
+            '@type'             => 'Article',
+            'headline'          => $seoArticleTitle,
+            'description'       => $seoArticleDesc,
+            'image'             => $seoArticleImage ?: null,
+            'url'               => $seoArticleUrl,
+            'datePublished'     => $article->published_at?->toIso8601String(),
+            'dateModified'      => $article->updated_at?->toIso8601String(),
+            'author'            => [
+                '@type' => 'Person',
+                'name'  => $article->author ?? 'Tim Super Vacation',
+            ],
+            'publisher'         => [
+                '@type' => 'Organization',
+                'name'  => 'Super Vacation',
+                'logo'  => [
+                    '@type' => 'ImageObject',
+                    'url'   => asset('images/logo/LOGO HORIZONTAL.png'),
+                ],
+            ],
+            'articleSection'    => $article->category,
+            'inLanguage'        => 'id-ID',
+            'mainEntityOfPage'  => [
+                '@type' => 'WebPage',
+                '@id'   => $seoArticleUrl,
+            ],
+        ];
+
+        $breadcrumbSchema = [
+            '@context'        => 'https://schema.org',
+            '@type'           => 'BreadcrumbList',
+            'itemListElement' => [
+                ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home',   'item' => url('/')],
+                ['@type' => 'ListItem', 'position' => 2, 'name' => 'Artikel','item' => url('/articles')],
+                ['@type' => 'ListItem', 'position' => 3, 'name' => $seoArticleTitle, 'item' => $seoArticleUrl],
+            ],
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($articleSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}</script>
+    <script type="application/ld+json">{!! json_encode($breadcrumbSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}</script>
+    @endonce
+
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8" x-data="{ copied: false }">
         
         <!-- Breadcrumbs Navigation -->

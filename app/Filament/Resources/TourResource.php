@@ -277,6 +277,48 @@ class TourResource extends Resource
                                     ->addActionLabel('Tambah Foto Galeri')
                                     ->columnSpanFull(),
                             ]),
+
+                        // TAB 5: 05 SEO (Optimasi Mesin Pencari)
+                        Tabs\Tab::make('05 SEO')
+                            ->icon('heroicon-o-magnifying-glass')
+                            ->schema([
+                                Forms\Components\Section::make('SEO - Optimasi Halaman Paket Tour')
+                                    ->description('Kontrol bagaimana halaman paket tour ini muncul di Google dan saat link dibagikan ke WhatsApp / Facebook.')
+                                    ->schema([
+                                        TextInput::make('meta_title')
+                                            ->label('Meta Title (Judul SEO)')
+                                            ->placeholder('Kosongkan untuk otomatis pakai judul tour')
+                                            ->maxLength(70)
+                                            ->helperText('Judul di tab browser & hasil pencarian Google. Idealnya 50-70 karakter. Jika dikosongkan, otomatis menggunakan judul paket tour.')
+                                            ->nullable()
+                                            ->columnSpanFull(),
+
+                                        Forms\Components\Textarea::make('meta_description')
+                                            ->label('Meta Description')
+                                            ->placeholder('Deskripsi singkat paket tour untuk Google...')
+                                            ->rows(3)
+                                            ->maxLength(165)
+                                            ->helperText('Muncul di bawah judul di hasil pencarian Google. Idealnya 120-160 karakter. Jika dikosongkan, otomatis diambil dari deskripsi paket.')
+                                            ->nullable()
+                                            ->columnSpanFull(),
+
+                                        TextInput::make('meta_keywords')
+                                            ->label('Meta Keywords')
+                                            ->placeholder('paket wisata jepang, open trip tokyo, tour autumn')
+                                            ->helperText('Kata kunci relevan, dipisahkan koma. Contoh: paket wisata jepang, open trip tokyo, tour autumn.')
+                                            ->nullable()
+                                            ->columnSpanFull(),
+
+                                        TextInput::make('og_image')
+                                            ->label('Open Graph Image URL (Thumbnail Share WA/FB)')
+                                            ->placeholder('https://...')
+                                            ->url()
+                                            ->helperText('URL gambar 1200x630px untuk thumbnail saat link dibagikan di WhatsApp/Facebook. Jika dikosongkan, akan menggunakan foto thumbnail paket.')
+                                            ->nullable()
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->columns(1),
+                            ]),
                     ])
                     ->columnSpanFull(),
             ]);

@@ -23,6 +23,67 @@
         $excludes = $tour->facilities->where('type', 'exclude');
     @endphp
 
+    {{-- ===== JSON-LD STRUCTURED DATA (SEO Rich Snippets untuk Google) ===== --}}
+    @once
+    @php
+        $seoTourTitle = $tour->meta_title ?: $tour->title;
+        $seoTourDesc  = strip_tags($tour->meta_description ?: substr($tour->description ?? '', 0, 300));
+        $seoTourImage = $tour->og_image ?: ($tour->thumbnail ? asset('storage/' . $tour->thumbnail) : '');
+        $seoTourPrice = (int) (($tour->promo_price && $tour->promo_price < $tour->price) ? $tour->promo_price : $tour->price);
+        $seoTourUrl   = request()->url();
+
+        $additionalProps = [
+            ['@type' => 'PropertyValue', 'name' => 'Durasi', 'value' => $tour->duration],
+        ];
+        if ($tour->destination) {
+            $additionalProps[] = ['@type' => 'PropertyValue', 'name' => 'Destinasi', 'value' => $tour->destination];
+        }
+        if ($tour->season) {
+            $additionalProps[] = ['@type' => 'PropertyValue', 'name' => 'Musim', 'value' => $tour->season];
+        }
+        if ($tour->start_date) {
+            $additionalProps[] = ['@type' => 'PropertyValue', 'name' => 'Tanggal Berangkat', 'value' => $tour->start_date->format('d M Y')];
+        }
+        if ($tour->country) {
+            $additionalProps[] = ['@type' => 'PropertyValue', 'name' => 'Negara', 'value' => $tour->country->name];
+        }
+
+        $productSchema = [
+            '@context'           => 'https://schema.org',
+            '@type'              => 'Product',
+            'name'               => $seoTourTitle,
+            'description'        => $seoTourDesc,
+            'image'              => $seoTourImage,
+            'url'                => $seoTourUrl,
+            'brand'              => ['@type' => 'Brand', 'name' => 'Super Vacation'],
+            'offers'             => [
+                '@type'          => 'Offer',
+                'priceCurrency'  => 'IDR',
+                'price'          => $seoTourPrice,
+                'availability'   => $tour->status === 'tersedia'
+                                    ? 'https://schema.org/InStock'
+                                    : 'https://schema.org/SoldOut',
+                'url'            => $seoTourUrl,
+                'seller'         => ['@type' => 'Organization', 'name' => 'Super Vacation'],
+            ],
+            'category'           => 'Paket Wisata' . ($tour->country ? ' ' . $tour->country->name : ''),
+            'additionalProperty' => $additionalProps,
+        ];
+
+        $breadcrumbSchema = [
+            '@context'        => 'https://schema.org',
+            '@type'           => 'BreadcrumbList',
+            'itemListElement' => [
+                ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home',       'item' => url('/')],
+                ['@type' => 'ListItem', 'position' => 2, 'name' => 'Paket Tour', 'item' => url('/tour-schedule')],
+                ['@type' => 'ListItem', 'position' => 3, 'name' => $seoTourTitle,'item' => $seoTourUrl],
+            ],
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($productSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}</script>
+    <script type="application/ld+json">{!! json_encode($breadcrumbSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}</script>
+    @endonce
+
     <!-- 1. HERO HEADER BANNER (CLEAN, MINIMALIST & EDITORIAL) -->
     <section class="pt-8 pb-8 sm:pt-12 sm:pb-10 bg-white border-b border-slate-100 mb-8 sm:mb-10"
              x-data="{ show: false }" 

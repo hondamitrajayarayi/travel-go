@@ -108,6 +108,45 @@ class ArticleResource extends Resource
                             ->default(true),
                     ])
                     ->columns(2),
+
+                Section::make('🔍 SEO – Optimasi Halaman Artikel')
+                    ->description('Pengaturan ini mengontrol bagaimana artikel muncul di Google dan saat link dibagikan ke WhatsApp / Facebook.')
+                    ->schema([
+                        TextInput::make('meta_title')
+                            ->label('Meta Title (Judul SEO)')
+                            ->placeholder('Kosongkan untuk otomatis pakai judul artikel')
+                            ->maxLength(70)
+                            ->helperText('Judul di tab browser & hasil pencarian Google. Idealnya 50–70 karakter. Otomatis dari judul artikel jika dikosongkan.')
+                            ->nullable()
+                            ->columnSpanFull(),
+
+                        Textarea::make('meta_description')
+                            ->label('Meta Description')
+                            ->placeholder('Deskripsi singkat artikel untuk Google...')
+                            ->rows(3)
+                            ->maxLength(165)
+                            ->helperText('Muncul di hasil pencarian Google. Idealnya 120–160 karakter. Otomatis dari excerpt artikel jika dikosongkan.')
+                            ->nullable()
+                            ->columnSpanFull(),
+
+                        TextInput::make('meta_keywords')
+                            ->label('Meta Keywords')
+                            ->placeholder('visa jepang, cara apply visa, tips wisata jepang')
+                            ->helperText('Kata kunci relevan, dipisahkan koma. Contoh: visa jepang, cara apply visa, tips wisata.')
+                            ->nullable()
+                            ->columnSpanFull(),
+
+                        TextInput::make('og_image')
+                            ->label('Open Graph Image URL (Thumbnail Share WA/FB)')
+                            ->placeholder('https://...')
+                            ->url()
+                            ->helperText('URL gambar 1200×630px untuk thumbnail saat link artikel dibagikan di WhatsApp/Facebook. Kosong = pakai foto thumbnail artikel.')
+                            ->nullable()
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(1)
+                    ->collapsible()
+                    ->collapsed(),
             ]);
     }
 

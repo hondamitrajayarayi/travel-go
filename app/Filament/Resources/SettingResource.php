@@ -25,7 +25,7 @@ class SettingResource extends Resource
 
     protected static ?string $navigationGroup = 'Pengaturan Web';
 
-    protected static ?string $navigationLabel = 'Pengaturan Kontak & Sosmed';
+    protected static ?string $navigationLabel = 'Pengaturan Web & SEO';
 
     protected static ?string $modelLabel = 'Pengaturan';
 
@@ -95,6 +95,7 @@ class SettingResource extends Resource
                         'Media Sosial'         => 'warning',
                         'Alamat & Operasional' => 'info',
                         'Rekening Bank'        => 'danger',
+                        'SEO'                  => 'primary',
                         default                => 'gray',
                     })
                     ->sortable(),
@@ -111,6 +112,7 @@ class SettingResource extends Resource
                 SelectFilter::make('group')
                     ->label('Filter Kategori')
                     ->options([
+                        'SEO'                  => '🔍 SEO',
                         'Kontak'               => 'Kontak',
                         'Media Sosial'         => 'Media Sosial',
                         'Alamat & Operasional' => 'Alamat & Operasional',
