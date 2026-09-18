@@ -641,9 +641,9 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach($tours as $tour)
                         @php
-                            $currentPrice = ($tour->promo_price && $tour->promo_price < $tour->price) ? $tour->promo_price : $tour->price;
+                            $currentPrice = ((float)$tour->promo_price > 0 && (float)$tour->promo_price < (float)$tour->price) ? $tour->promo_price : $tour->price;
                             $priceData = $parsePrice($currentPrice);
-                            $oldPriceData = ($tour->promo_price && $tour->promo_price < $tour->price) ? $parsePrice($tour->price) : null;
+                            $oldPriceData = ((float)$tour->promo_price > 0 && (float)$tour->promo_price < (float)$tour->price) ? $parsePrice($tour->price) : null;
                         @endphp
 
                         <div onclick="window.location.href='/tour/{{ $tour->slug }}'" 
@@ -747,7 +747,7 @@
                                 </div>
 
                                 <!-- Bottom Right Promo Oval Badge (Exact like reference image) -->
-                                @if($tour->promo_price && $tour->promo_price < $tour->price)
+                                @if((float)$tour->promo_price > 0 && (float)$tour->promo_price < (float)$tour->price)
                                     <div class="absolute bottom-3 right-3 z-10">
                                         <span class="px-4 py-1.5 rounded-full bg-[#0055D4] text-white font-semibold text-xs sm:text-sm tracking-wide shadow-lg border border-white/20">
                                             Promo

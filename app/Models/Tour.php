@@ -34,8 +34,8 @@ class Tour extends Model
     ];
 
     protected $casts = [
-        'price'          => 'decimal:2',
-        'promo_price'    => 'decimal:2',
+        'price'          => 'float',
+        'promo_price'    => 'float',
         'start_date'     => 'date',
         'end_date'       => 'date',
     ];

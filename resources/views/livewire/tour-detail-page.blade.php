@@ -16,9 +16,9 @@
             return ['num' => number_format($amount, 0, ',', '.'), 'unit' => 'Rp / pax'];
         };
 
-        $currentPrice = ($tour->promo_price && $tour->promo_price < $tour->price) ? $tour->promo_price : $tour->price;
+        $currentPrice = ((float)$tour->promo_price > 0 && (float)$tour->promo_price < (float)$tour->price) ? $tour->promo_price : $tour->price;
         $priceData = $parsePrice($currentPrice);
-        $oldPriceData = ($tour->promo_price && $tour->promo_price < $tour->price) ? $parsePrice($tour->price) : null;
+        $oldPriceData = ((float)$tour->promo_price > 0 && (float)$tour->promo_price < (float)$tour->price) ? $parsePrice($tour->price) : null;
         $includes = $tour->facilities->where('type', 'include');
         $excludes = $tour->facilities->where('type', 'exclude');
     @endphp
@@ -29,7 +29,7 @@
         $seoTourTitle = $tour->meta_title ?: $tour->title;
         $seoTourDesc  = strip_tags($tour->meta_description ?: substr($tour->description ?? '', 0, 300));
         $seoTourImage = $tour->og_image ?: ($tour->thumbnail ? asset('storage/' . $tour->thumbnail) : '');
-        $seoTourPrice = (int) (($tour->promo_price && $tour->promo_price < $tour->price) ? $tour->promo_price : $tour->price);
+        $seoTourPrice = (int) (((float)$tour->promo_price > 0 && (float)$tour->promo_price < (float)$tour->price) ? $tour->promo_price : $tour->price);
         $seoTourUrl   = request()->url();
 
         $additionalProps = [
@@ -190,7 +190,7 @@
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent pointer-events-none"></div>
 
                     <!-- Top Left Promo Badge -->
-                    @if($tour->promo_price && $tour->promo_price < $tour->price)
+                    @if((float)$tour->promo_price > 0 && (float)$tour->promo_price < (float)$tour->price)
                         <div class="absolute top-5 left-5 z-10">
                             <span class="px-4 py-1.5 rounded-full bg-[#0055D4] text-white font-bold text-xs shadow-lg border border-white/20 uppercase tracking-wider">
                                 PROMO DISKON HARGA
@@ -340,7 +340,7 @@
                             </span>
                         </div>
 
-                        @if($tour->promo_price && $tour->promo_price < $tour->price)
+                        @if((float)$tour->promo_price > 0 && (float)$tour->promo_price < (float)$tour->price)
                             <div class="text-xs text-sky-200/80 line-through font-medium">
                                 Rp {{ number_format($tour->price, 0, ',', '.') }}
                             </div>
@@ -782,7 +782,7 @@
             <div class="text-xl font-extrabold text-[#1B5A7A] leading-tight">
                 Rp {{ number_format($currentPrice, 0, ',', '.') }}
             </div>
-            @if($tour->promo_price && $tour->promo_price < $tour->price)
+            @if((float)$tour->promo_price > 0 && (float)$tour->promo_price < (float)$tour->price)
                 <span class="text-xs text-slate-400 line-through font-medium block">
                     Rp {{ number_format($tour->price, 0, ',', '.') }}
                 </span>
