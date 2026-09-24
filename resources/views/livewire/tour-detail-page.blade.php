@@ -442,9 +442,6 @@
                 <a href="#itinerary-section" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-[#1B5A7A] text-white shadow-xs hover:bg-[#0F355C] transition whitespace-nowrap">
                     Itinerary Harian
                 </a>
-                <a href="#overview-section" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#1B5A7A] hover:bg-slate-100 transition whitespace-nowrap">
-                    Ikhtisar & Deskripsi
-                </a>
                 <a href="#facilities-section" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 hover:text-[#1B5A7A] hover:bg-slate-100 transition whitespace-nowrap">
                     Fasilitas Include & Exclude
                 </a>
@@ -536,26 +533,6 @@
                     @endif
                 </div>
 
-            </div>
-        </section>
-
-        <!-- 6. SECTION: OVERVIEW / DESKRIPSI -->
-        <section id="overview-section" class="scroll-mt-28 pt-8 border-t border-slate-200">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                <div class="lg:col-span-4 space-y-2">
-                    <span class="text-[11px] font-bold text-[#1B5A7A] uppercase tracking-[0.2em] block">
-                        IKHTISAR TOUR
-                    </span>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
-                        Gambaran Umum Perjalanan
-                    </h2>
-                </div>
-
-                <div class="lg:col-span-8 bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-xs">
-                    <div class="prose prose-slate max-w-none text-slate-600 text-xs sm:text-sm leading-relaxed prose-p:leading-relaxed prose-headings:font-bold prose-headings:text-slate-900">
-                        {!! $tour->description !!}
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -741,11 +718,6 @@
             <a href="#itinerary-section" @click="open = false" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-[#1B5A7A] transition">
                 <span>Itinerary Harian</span>
                 <span class="text-[10px] bg-sky-100 text-[#1B5A7A] px-2 py-0.5 rounded-full font-bold">{{ $tour->itineraries->count() }} Hari</span>
-            </a>
-
-            <a href="#overview-section" @click="open = false" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-[#1B5A7A] transition">
-                <span>Ikhtisar & Deskripsi</span>
-                <span class="text-slate-400">→</span>
             </a>
 
             <a href="#facilities-section" @click="open = false" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-[#1B5A7A] transition">
