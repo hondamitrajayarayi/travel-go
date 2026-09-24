@@ -693,8 +693,8 @@
 
     </div>
 
-    <!-- 9. FLOATING QUICK-JUMP SECTION NAVIGATOR BUTTON (BOTTOM RIGHT ACCESSIBLE ANYWHERE) -->
-    <div x-data="{ open: false }" class="fixed bottom-20 right-4 z-40 sm:bottom-8 sm:right-8">
+    <!-- 9. FLOATING QUICK-JUMP SECTION NAVIGATOR BUTTON (BOTTOM LEFT ACCESSIBLE ANYWHERE) -->
+    <div x-data="{ open: false }" class="fixed bottom-20 left-4 z-40 sm:bottom-8 sm:left-8">
         
         <!-- Popup Menu Sheet -->
         <div x-show="open" 
@@ -706,7 +706,7 @@
              x-transition:leave-start="opacity-100 scale-100 translate-y-0"
              x-transition:leave-end="opacity-0 scale-90 translate-y-4"
              x-cloak
-             class="absolute bottom-14 right-0 w-64 bg-white rounded-2xl border border-slate-200 shadow-2xl p-3 space-y-1 text-slate-800">
+             class="absolute bottom-14 left-0 w-64 bg-white rounded-2xl border border-slate-200 shadow-2xl p-3 space-y-1 text-slate-800">
             
             <div class="flex items-center justify-between px-3 py-1.5 border-b border-slate-100 mb-1">
                 <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
