@@ -22,13 +22,13 @@
             <!-- Main Title -->
             <h1 :class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'" 
                 class="transition-all duration-700 delay-100 ease-out font-display text-3xl sm:text-5xl lg:text-5xl font-semibold tracking-[-.025em] text-slate-900 leading-[1.15]">
-                Jadwal Pemberangkatan Tour
+                Jadwal Tour Package Pilihan
             </h1>
 
             <!-- Subtitle -->
             <p :class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'" 
                class="transition-all duration-700 delay-200 ease-out mt-3 text-sm sm:text-base text-slate-500 font-normal max-w-2xl mx-auto leading-relaxed">
-                Jelajahi seluruh pilihan paket wisata pilihan dengan kepastian tanggal keberangkatan dan kuota terjamin.
+                Jelajahi seluruh pilihan tour package eksklusif dengan pilihan tanggal keberangkatan terbaik dan layanan profesional.
             </p>
 
         </div>
@@ -38,7 +38,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
 
         <!-- FILTER TOOLBAR CONTAINER (SAMAKAN DENGAN HOME PAGE) -->
-        <div x-data="{ mobileFilterOpen: false }" wire:ignore.self class="bg-white border border-slate-200/90 rounded-3xl p-4 sm:p-6 shadow-sm space-y-4">
+        <div x-data="{ mobileFilterOpen: false }" wire:ignore.self class="bg-white border border-slate-200/90 rounded-3xl p-4 sm:p-6 shadow-sm space-y-4 relative z-30">
             
             <!-- Mobile Filter Toggle Bar (Visible only on mobile < sm) -->
             <div class="sm:hidden">
@@ -95,7 +95,7 @@
                     </div>
 
                     <!-- 3. Bulan Pemberangkatan (Multi-Select Dropdown Popover) -->
-                    <div class="relative" x-data="{ open: false }" @click.outside="open = false" wire:ignore.self>
+                    <div class="relative z-40" x-data="{ open: false }" @click.outside="open = false" wire:ignore.self>
                         <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Bulan Pemberangkatan</label>
                         <button type="button" 
                                 @click="open = !open" 
@@ -120,7 +120,7 @@
                              x-transition:leave="transition ease-in duration-100"
                              x-transition:leave-start="opacity-100 scale-100"
                              x-transition:leave-end="opacity-0 scale-95"
-                             class="absolute z-50 mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl p-3 space-y-2 left-0 sm:right-0 sm:left-auto"
+                             class="absolute z-[100] mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-2xl p-3 space-y-2 left-0 sm:right-0 sm:left-auto"
                              style="display: none;">
                             <div class="flex items-center justify-between pb-2 border-b border-slate-100">
                                 <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Pilih Bulan</span>
@@ -143,7 +143,7 @@
                     </div>
 
                     <!-- 4. Tahun Pemberangkatan (Multi-Select Dropdown Popover) -->
-                    <div class="relative" x-data="{ open: false }" @click.outside="open = false" wire:ignore.self>
+                    <div class="relative z-40" x-data="{ open: false }" @click.outside="open = false" wire:ignore.self>
                         <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Tahun Pemberangkatan</label>
                         <button type="button" 
                                 @click="open = !open" 
@@ -168,7 +168,7 @@
                              x-transition:leave="transition ease-in duration-100"
                              x-transition:leave-start="opacity-100 scale-100"
                              x-transition:leave-end="opacity-0 scale-95"
-                             class="absolute z-50 mt-2 w-52 bg-white border border-slate-200 rounded-2xl shadow-xl p-3 space-y-2 right-0"
+                             class="absolute z-[100] mt-2 w-52 bg-white border border-slate-200 rounded-2xl shadow-2xl p-3 space-y-2 right-0"
                              style="display: none;">
                             <div class="flex items-center justify-between pb-2 border-b border-slate-100">
                                 <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Pilih Tahun</span>
@@ -190,8 +190,8 @@
                         </div>
                     </div>
 
-                </div>
-            </div>
+                        </div>
+                    </div>
 
             <!-- Active Filter Bar & Reset Button -->
             @if($search !== '' || $selectedCountry !== 'all' || !empty($selectedMonths) || !empty($selectedYears) || $selectedCategory !== 'all')
@@ -242,18 +242,9 @@
                          class="group bg-white rounded-3xl border border-slate-200/90 shadow-md hover:shadow-2xl hover:shadow-sky-950/15 hover:border-sky-300 transition-all duration-300 flex flex-col overflow-hidden relative cursor-pointer"
                          x-data="{ copied: false }">
                         
-                        @if($tour->status === 'penuh')
-                            <!-- Sold Out / Penuh Translucent Gray Overlay Layer -->
-                            <div class="absolute inset-0 bg-slate-900/40 backdrop-grayscale z-30 pointer-events-none rounded-3xl flex items-center justify-center">
-                                <span class="px-5 py-2.5 rounded-2xl bg-rose-600/95 text-white font-black text-sm tracking-widest uppercase shadow-2xl border-2 border-white/40 transform -rotate-3">
-                                    KUOTA PENUH
-                                </span>
-                            </div>
-                        @endif
-                        
                         <!-- 1. Top Season / Header Banner -->
                         <div class="bg-[#E6F0F8] border-b border-sky-100 py-2.5 px-4 text-center font-semibold text-xs sm:text-sm tracking-wider uppercase text-[#1B5A7A] flex items-center justify-center gap-2">
-                            <span>{{ $tour->season ? strtoupper($tour->season) . ' SEASON' : 'SUPER VACATION TOUR' }}</span>
+                            <span>{{ $tour->season ? strtoupper($tour->season) . ' SEASON' : 'SUPER VACATION TOUR PACKAGE' }}</span>
                         </div>
 
                         <!-- 2. Main Image Container -->
@@ -272,16 +263,11 @@
                                 </div>
                             @endif
 
-                            <!-- Top Left Badges: Duration & Status -->
+                            <!-- Top Left Badges: Duration & Departure Status -->
                             <div class="absolute top-3 left-3 flex flex-col gap-1.5 items-start z-10">
                                 <span class="px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-[11px] font-semibold text-slate-800 shadow-sm border border-white/60 flex items-center gap-1">
                                     ⏱️ {{ $tour->duration }}
                                 </span>
-                                @if($tour->status === 'penuh')
-                                    <span class="px-2.5 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-semibold uppercase tracking-wider shadow-sm">
-                                        Penuh
-                                    </span>
-                                @endif
                             </div>
 
                             <!-- Top Right Floating Quick Actions (Share, Download, WA) -->
@@ -353,12 +339,16 @@
                                 {{ $tour->title }}
                             </h3>
 
-                            @if($tour->start_date)
+                            @if($tour->departures && $tour->departures->isNotEmpty())
                                 <div class="text-[#0F355C] font-semibold text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1 mt-0.5">
                                     <svg class="w-3.5 h-3.5 text-[#0F355C] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
-                                    <span>{{ $tour->start_date->format('d M Y') }}@if($tour->end_date) – {{ $tour->end_date->format('d M Y') }}@endif</span>
+                                    @if($tour->departures->count() === 1)
+                                        <span>{{ $tour->departures->first()->start_date->format('d M Y') }}@if($tour->departures->first()->end_date) – {{ $tour->departures->first()->end_date->format('d M Y') }}@endif</span>
+                                    @else
+                                        <span>{{ $tour->departures->first()->start_date->format('d M Y') }} <span class="bg-[#0F355C] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-1">+{{ $tour->departures->count() - 1 }} Other</span></span>
+                                    @endif
                                 </div>
                             @endif
                         </div>
@@ -378,6 +368,7 @@
 
                             <!-- Right Column: Pricing Display -->
                             <div class="text-right shrink-0 flex flex-col justify-center">
+                                <span class="text-[10px] uppercase font-semibold text-sky-200 tracking-wider block mb-0.5">Start From</span>
                                 @if($oldPriceData)
                                     <span class="text-[11px] text-white/70 line-through font-semibold block leading-none mb-0.5">
                                         {{ $oldPriceData['num'] }} {{ $oldPriceData['unit'] }}

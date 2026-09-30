@@ -35,6 +35,9 @@ class TestimonialResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    // Hidden from admin navigation (Testimonials section removed from frontend)
+    protected static bool $shouldRegisterNavigation = false;
+
     public static function form(Form $form): Form
     {
         return $form

@@ -318,14 +318,14 @@
                         </div>
                     </div>
 
-                    <!-- Floating Badge 2: Pasti Berangkat Guarantee (Kanan Atas) -->
-                    <div class="absolute -top-4 -right-2 sm:right-4 bg-gradient-to-r from-blue-600 to-sky-500 text-white rounded-2xl px-4 py-2.5 shadow-lg shadow-blue-500/25 flex items-center gap-2.5 transform hover:scale-105 transition duration-300 z-10">
+                    <!-- Floating Badge 2: Premium Tour Package (Kanan Atas) -->
+                    <!-- <div class="absolute -top-4 -right-2 sm:right-4 bg-gradient-to-r from-blue-600 to-sky-500 text-white rounded-2xl px-4 py-2.5 shadow-lg shadow-blue-500/25 flex items-center gap-2.5 transform hover:scale-105 transition duration-300 z-10">
                         <span class="text-base">🛡️</span>
                         <div class="text-left">
-                            <p class="text-xs font-semibold tracking-tight leading-none">100% GARANSI</p>
-                            <p class="text-[10px] text-blue-100 font-medium leading-tight mt-0.5">Jadwal Pasti Berangkat</p>
+                            <p class="text-xs font-semibold tracking-tight leading-none">PREMIUM CHOICE</p>
+                            <p class="text-[10px] text-blue-100 font-medium leading-tight mt-0.5">Curated Tour Package</p>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <!-- SISI KANAN: KONTEN NARASI & 4 BENTO FEATURE CARDS -->
@@ -437,15 +437,15 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <!-- Header & Filter Toolbar -->
-            <div class="mb-12 space-y-6">
+            <div class="mb-12 space-y-6 relative z-30">
                 <div class="text-center max-w-3xl mx-auto reveal-item reveal-up">
                     <p class="mb-2 text-[12px] font-semibold tracking-[.12em] text-[#1B5A7A] uppercase">Tour pilihan kami</p>
-                    <h2 class="font-display text-[32px] leading-[1.15] font-semibold tracking-[-.025em] text-balance lg:text-[44px]">Tour yang pasti berangkat</h2>
+                    <h2 class="font-display text-[32px] leading-[1.15] font-semibold tracking-[-.025em] text-balance lg:text-[44px]">Tour Package</h2>
                     <p class="mt-3 max-w-xl mx-auto text-[15px] leading-[1.7] font-normal text-[#525B6B]">Jelajahi berbagai destinasi impian anda</p>
                 </div>
 
                 <!-- Search & Multi-Select Array Filter Controls Container -->
-                <div x-data="{ mobileFilterOpen: false }" wire:ignore.self class="reveal-item reveal-fade bg-slate-50 border border-slate-200/90 rounded-3xl p-4 sm:p-6 shadow-sm space-y-4" style="transition-delay: 150ms">
+                <div x-data="{ mobileFilterOpen: false }" wire:ignore.self class="reveal-item reveal-fade bg-slate-50 border border-slate-200/90 rounded-3xl p-4 sm:p-6 shadow-sm space-y-4 relative z-30" style="transition-delay: 150ms">
                     
                     <!-- Mobile Filter Toggle Bar (Visible only on mobile < sm) -->
                     <div class="sm:hidden">
@@ -502,7 +502,7 @@
                             </div>
 
                             <!-- 3. Bulan Pemberangkatan (Multi-Select Dropdown Popover) -->
-                            <div class="relative" x-data="{ open: false }" @click.outside="open = false" wire:ignore.self>
+                            <div class="relative z-40" x-data="{ open: false }" @click.outside="open = false" wire:ignore.self>
                                 <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Bulan Pemberangkatan</label>
                                 <button type="button" 
                                         @click="open = !open" 
@@ -527,7 +527,7 @@
                                      x-transition:leave="transition ease-in duration-100"
                                      x-transition:leave-start="opacity-100 scale-100"
                                      x-transition:leave-end="opacity-0 scale-95"
-                                     class="absolute z-50 mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl p-3 space-y-2 left-0 sm:right-0 sm:left-auto"
+                                     class="absolute z-[100] mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-2xl p-3 space-y-2 left-0 sm:right-0 sm:left-auto"
                                      style="display: none;">
                                     <div class="flex items-center justify-between pb-2 border-b border-slate-100">
                                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Pilih Bulan</span>
@@ -550,7 +550,7 @@
                             </div>
 
                             <!-- 4. Tahun Pemberangkatan (Multi-Select Dropdown Popover) -->
-                            <div class="relative" x-data="{ open: false }" @click.outside="open = false" wire:ignore.self>
+                            <div class="relative z-40" x-data="{ open: false }" @click.outside="open = false" wire:ignore.self>
                                 <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Tahun Pemberangkatan</label>
                                 <button type="button" 
                                         @click="open = !open" 
@@ -575,7 +575,7 @@
                                      x-transition:leave="transition ease-in duration-100"
                                      x-transition:leave-start="opacity-100 scale-100"
                                      x-transition:leave-end="opacity-0 scale-95"
-                                     class="absolute z-50 mt-2 w-52 bg-white border border-slate-200 rounded-2xl shadow-xl p-3 space-y-2 right-0"
+                                     class="absolute z-[100] mt-2 w-52 bg-white border border-slate-200 rounded-2xl shadow-2xl p-3 space-y-2 right-0"
                                      style="display: none;">
                                     <div class="flex items-center justify-between pb-2 border-b border-slate-100">
                                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Pilih Tahun</span>
@@ -651,18 +651,9 @@
                              style="transition-delay: {{ ($loop->index % 6) * 80 }}ms"
                              x-data="{ copied: false }">
                             
-                            @if($tour->status === 'penuh')
-                                <!-- Sold Out / Penuh Translucent Gray Overlay Layer -->
-                                <div class="absolute inset-0 bg-slate-900/40 backdrop-grayscale z-30 pointer-events-none rounded-3xl flex items-center justify-center">
-                                    <span class="px-5 py-2.5 rounded-2xl bg-rose-600/95 text-white font-black text-sm tracking-widest uppercase shadow-2xl border-2 border-white/40 transform -rotate-3">
-                                        KUOTA PENUH
-                                    </span>
-                                </div>
-                            @endif
-                            
-                            <!-- 1. Top Season / Header Banner -->
+                             <!-- 1. Top Season / Header Banner -->
                             <div class="bg-[#E6F0F8] border-b border-sky-100 py-2.5 px-4 text-center font-semibold text-xs sm:text-sm tracking-wider uppercase text-[#1B5A7A] flex items-center justify-center gap-2">
-                                <span>{{ $tour->season ? strtoupper($tour->season) . ' SEASON' : 'SUPER VACATION TOUR' }}</span>
+                                <span>{{ $tour->season ? strtoupper($tour->season) . ' SEASON' : 'SUPER VACATION TOUR PACKAGE' }}</span>
                             </div>
 
                             <!-- 2. Main Image Container -->
@@ -681,16 +672,11 @@
                                     </div>
                                 @endif
 
-                                <!-- Top Left Badges: Duration & Status -->
+                                <!-- Top Left Badges: Duration & Departure Status -->
                                 <div class="absolute top-3 left-3 flex flex-col gap-1.5 items-start z-10">
                                     <span class="px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-[11px] font-semibold text-slate-800 shadow-sm border border-white/60 flex items-center gap-1">
                                         ⏱️ {{ $tour->duration }}
                                     </span>
-                                    @if($tour->status === 'penuh')
-                                        <span class="px-2.5 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-semibold uppercase tracking-wider shadow-sm">
-                                            Penuh
-                                        </span>
-                                    @endif
                                 </div>
 
                                 <!-- Top Right Floating Quick Actions (Share, Download, WA) -->
@@ -762,12 +748,16 @@
                                     {{ $tour->title }}
                                 </h3>
 
-                                @if($tour->start_date)
+                                @if($tour->departures && $tour->departures->isNotEmpty())
                                     <div class="text-[#0F355C] font-semibold text-xs sm:text-sm tracking-wider flex items-center justify-center gap-1 mt-0.5">
                                         <svg class="w-3.5 h-3.5 text-[#0F355C] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
-                                        <span>{{ $tour->start_date->format('d M Y') }}@if($tour->end_date) – {{ $tour->end_date->format('d M Y') }}@endif</span>
+                                        @if($tour->departures->count() === 1)
+                                            <span>{{ $tour->departures->first()->start_date->format('d M Y') }}@if($tour->departures->first()->end_date) – {{ $tour->departures->first()->end_date->format('d M Y') }}@endif</span>
+                                        @else
+                                            <span>{{ $tour->departures->first()->start_date->format('d M Y') }} <span class="bg-[#0F355C] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-1">+{{ $tour->departures->count() - 1 }} Other</span></span>
+                                        @endif
                                     </div>
                                 @endif
                             </div>
@@ -787,6 +777,7 @@
 
                                 <!-- Right Column: Pricing Display -->
                                 <div class="text-right shrink-0 flex flex-col justify-center">
+                                    <span class="text-[10px] uppercase font-semibold text-sky-200 tracking-wider block mb-0.5">Start From</span>
                                     @if($oldPriceData)
                                         <span class="text-[11px] text-white/70 line-through font-semibold block leading-none mb-0.5">
                                             {{ $oldPriceData['num'] }} {{ $oldPriceData['unit'] }}
@@ -810,7 +801,7 @@
                     <a href="{{ route('tour-schedule') }}" 
                        wire:navigate 
                        class="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-[#1B5A7A] hover:bg-[#13425a] text-white text-sm font-normal shadow-lg hover:shadow-xl transition-all active:scale-95 cursor-pointer">
-                        <span>Lihat Semua Jadwal Tour ({{ $totalToursCount }} Paket)</span>
+                        <span>Lihat Semua Jadwal Tour</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                         </svg>
@@ -825,177 +816,92 @@
 
         </div>
     </section>
-    <!-- 6. SECTION TESTIMONI (AVENIR TRAVEL STYLE: 3 DATA PER TAMPILAN & BISA DIGESER) -->
-    <section id="testimonials" 
-             x-data="{
-                isDown: false,
-                startX: 0,
-                scrollLeft: 0,
-                canScrollLeft: false,
-                canScrollRight: true,
-                init() {
-                    this.$nextTick(() => this.updateScrollState());
-                },
-                updateScrollState() {
-                    const el = this.$refs.testimonialSlider;
-                    if (!el) return;
-                    this.canScrollLeft = el.scrollLeft > 10;
-                    this.canScrollRight = el.scrollLeft < (el.scrollWidth - el.clientWidth - 15);
-                },
-                scrollNext() {
-                    const el = this.$refs.testimonialSlider;
-                    const card = el.querySelector('.snap-start');
-                    const scrollAmount = card ? card.offsetWidth + 32 : 380;
-                    el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-                    setTimeout(() => this.updateScrollState(), 350);
-                },
-                scrollPrev() {
-                    const el = this.$refs.testimonialSlider;
-                    const card = el.querySelector('.snap-start');
-                    const scrollAmount = card ? card.offsetWidth + 32 : 380;
-                    el.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-                    setTimeout(() => this.updateScrollState(), 350);
-                },
-                startDrag(e) {
-                    this.isDown = true;
-                    this.startX = (e.pageX || (e.touches && e.touches[0].pageX)) - this.$refs.testimonialSlider.offsetLeft;
-                    this.scrollLeft = this.$refs.testimonialSlider.scrollLeft;
-                },
-                stopDrag() {
-                    this.isDown = false;
-                    this.updateScrollState();
-                },
-                onDrag(e) {
-                    if (!this.isDown) return;
-                    e.preventDefault();
-                    const x = (e.pageX || (e.touches && e.touches[0].pageX)) - this.$refs.testimonialSlider.offsetLeft;
-                    const walk = (x - this.startX) * 1.3;
-                    this.$refs.testimonialSlider.scrollLeft = this.scrollLeft - walk;
-                    this.updateScrollState();
-                }
-             }"
-             class="reveal-group py-20 sm:py-28 bg-white border-t border-slate-100 relative overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            <!-- Centered Minimalist Header -->
-            <div class="text-center max-w-3xl mx-auto mb-14 sm:mb-18 reveal-item reveal-up">
-                <span class="text-xs font-bold tracking-[0.25em] text-[#1B5A7A] uppercase block mb-3.5">
-                    TESTIMONIALS
-                </span>
-                <h2 class="text-4xl sm:text-5xl lg:text-6xl font-semibold text-slate-900 tracking-tight leading-[1.12] max-w-xl mx-auto font-display">
-                    Cerita dari yang<br>sudah pulang
-                </h2>
+    <!-- 6. SECTION POPULAR DESTINATIONS -->
+    @if(isset($popularDestinations) && $popularDestinations->count() > 0)
+    <section id="destinations" class="reveal-group py-20 sm:py-28 bg-white border-t border-slate-100 relative overflow-hidden">
+
+        {{-- Background ambient glow --}}
+        <div class="absolute -top-32 -right-32 w-96 h-96 bg-sky-400/8 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-blue-400/8 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            {{-- Section Header --}}
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-5 mb-12 reveal-item reveal-up">
+                <div class="space-y-2">
+                    <span class="text-xs font-bold tracking-[0.25em] text-[#1B5A7A] uppercase block">DESTINASI POPULER</span>
+                    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-900 tracking-tight leading-[1.12] font-display">
+                        Popular Destinations
+                    </h2>
+                    <p class="text-sm sm:text-[15px] text-slate-500 font-normal leading-relaxed max-w-lg">
+                        Temukan keindahan berbagai negara dan jelajahi dokumentasi perjalanan bersama Super Vacation.
+                    </p>
+                </div>
+                <!-- <a href="{{ route('gallery') }}" 
+                   wire:navigate 
+                   class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-slate-200 text-xs font-bold text-[#1B5A7A] shadow-xs hover:bg-[#1B5A7A] hover:text-white transition-all cursor-pointer shrink-0">
+                    <span>Lihat Semua Destinasi</span>
+                    <span>➔</span>
+                </a> -->
             </div>
 
-            @if($testimonials->count() > 0)
-                <!-- Horizontal Slider with Exactly 3 Items Per View on Desktop -->
-                <div class="relative reveal-item reveal-up" style="transition-delay: 150ms">
-                    
-                    <div x-ref="testimonialSlider" 
-                         @scroll.debounce.50ms="updateScrollState()"
-                         @mousedown="startDrag($event)"
-                         @mouseleave="stopDrag()"
-                         @mouseup="stopDrag()"
-                         @mousemove="onDrag($event)"
-                         class="flex gap-8 overflow-x-auto snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden pb-4 pt-2 -mx-4 px-4 sm:mx-0 sm:px-0 cursor-grab active:cursor-grabbing">
-                        @foreach($testimonials as $testimonial)
-                            <div class="snap-start shrink-0 w-[85%] sm:w-[calc((100%-32px)/2)] lg:w-[calc((100%-64px)/3)] border-t border-slate-200/90 pt-8 sm:pt-10 flex flex-col justify-between group select-none">
-                                
-                                <!-- Star Rating & Review Quote -->
-                                <div>
-                                    <!-- Orange Star Rating (5 Stars) -->
-                                    <div class="flex items-center gap-1 text-[#E85D04] text-xs sm:text-sm mb-4">
-                                        @for($i = 1; $i <= 5; $i++)
-                                            @if($i <= ($testimonial->rating ?? 5))
-                                                <span>★</span>
-                                            @else
-                                                <span class="text-slate-200">★</span>
-                                            @endif
-                                        @endfor
-                                    </div>
+            {{-- Destination Cards Grid (3 columns desktop, 2 tablet, 1 mobile) --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+                @foreach($popularDestinations as $dest)
+                    @php
+                        // Get cover image from country image or first gallery photo
+                        $firstGallery = $dest->galleries ? $dest->galleries->first() : null;
+                        $firstPhoto   = $firstGallery ? ($firstGallery->getAllPhotos()[0] ?? $firstGallery->image_path) : null;
 
-                                    <!-- Review Text in Clean Quotes -->
-                                    <blockquote class="text-[13.5px] sm:text-[14.5px] text-slate-700 leading-relaxed font-normal mb-8">
-                                        &ldquo;{{ $testimonial->story ?? $testimonial->title }}&rdquo;
-                                    </blockquote>
-                                </div>
+                        $destCover = $dest->image
+                            ? asset('storage/' . $dest->image)
+                            : ($firstPhoto
+                                ? asset('storage/' . $firstPhoto)
+                                : 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80');
 
-                                <!-- Traveler Avatar & Info Footer -->
-                                <div class="flex items-center gap-3 pt-2 mt-auto">
-                                    <!-- Round Avatar / Initial Badge -->
-                                    @php
-                                        $colors = [
-                                            ['bg' => '#EDE9FE', 'text' => '#6D28D9'], // Purple
-                                            ['bg' => '#E0F2FE', 'text' => '#0369A1'], // Sky
-                                            ['bg' => '#E0E7FF', 'text' => '#4338CA'], // Indigo
-                                            ['bg' => '#FEF3C7', 'text' => '#B45309'], // Amber
-                                            ['bg' => '#DCFCE7', 'text' => '#15803D'], // Green
-                                            ['bg' => '#FCE7F3', 'text' => '#BE185D'], // Pink
-                                        ];
-                                        $palette = $colors[$loop->index % count($colors)];
-                                        
-                                        $nameParts = explode(' ', trim($testimonial->name ?? 'User'));
-                                        $initials = '';
-                                        foreach(array_slice($nameParts, 0, 2) as $p) {
-                                            $initials .= strtoupper(substr($p, 0, 1));
-                                        }
-                                    @endphp
+                        $destName  = trim($dest->name);
+                        $destTitle = str_starts_with(strtolower($destName), 'tour') ? $destName : 'Tour ' . $destName;
+                        $destSlug  = $dest->slug ?: \Illuminate\Support\Str::slug($destName);
+                    @endphp
+                    <a href="{{ route('gallery.detail', $destSlug) }}"
+                       wire:navigate
+                       class="group reveal-item reveal-up relative flex flex-col justify-end w-full h-[380px] sm:h-[420px] rounded-2xl sm:rounded-3xl overflow-hidden bg-neutral-900 shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer block"
+                       style="min-height: 380px; aspect-ratio: 3/4; transition-delay: {{ ($loop->index % 3) * 120 + 100 }}ms">
 
-                                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden shadow-2xs"
-                                         style="background-color: {{ $palette['bg'] }}; color: {{ $palette['text'] }};">
-                                        @if($testimonial->avatar)
-                                            <img src="{{ asset('storage/' . $testimonial->avatar) }}" alt="{{ $testimonial->name }}" class="w-full h-full object-cover rounded-full" />
-                                        @else
-                                            <span>{{ $initials ?: 'U' }}</span>
-                                        @endif
-                                    </div>
+                        <img src="{{ $destCover }}"
+                             alt="{{ $destName }}"
+                             loading="lazy"
+                             class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
 
-                                    <!-- Name & Source Subtitle -->
-                                    <div class="min-w-0">
-                                        <h4 class="font-bold text-xs sm:text-sm text-slate-900 leading-tight truncate">
-                                            {{ $testimonial->name ?? 'Traveler Super Vacation' }}
-                                        </h4>
-                                        <p class="text-[10px] sm:text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-0.5 truncate">
-                                            {{ $testimonial->trip_date ? strtoupper($testimonial->trip_date) . ' · ' : '' }}ULASAN GOOGLE
-                                        </p>
-                                    </div>
-                                </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none"></div>
 
-                            </div>
-                        @endforeach
-                    </div>
-
-                    <!-- Clean Slider Controls (Centered Below) -->
-                    @if($testimonials->count() > 3)
-                        <div class="flex items-center justify-center gap-3 mt-10 reveal-item reveal-fade" style="transition-delay: 250ms">
-                            <button @click="scrollPrev()" 
-                                    type="button" 
-                                    title="Geser Kiri"
-                                    class="w-10 h-10 rounded-full bg-slate-50 hover:bg-[#1B5A7A] hover:text-white text-slate-700 border border-slate-200 flex items-center justify-center transition-all duration-200 shadow-2xs focus:outline-none active:scale-95 cursor-pointer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                                </svg>
-                            </button>
-                            <button @click="scrollNext()" 
-                                    type="button" 
-                                    title="Geser Kanan"
-                                    class="w-10 h-10 rounded-full bg-slate-50 hover:bg-[#1B5A7A] hover:text-white text-slate-700 border border-slate-200 flex items-center justify-center transition-all duration-200 shadow-2xs focus:outline-none active:scale-95 cursor-pointer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                </svg>
-                            </button>
+                        <div class="relative z-10 p-5 sm:p-6">
+                            <h3 class="text-lg sm:text-xl font-bold text-white leading-tight group-hover:text-sky-200 transition-colors mb-1">
+                                {{ $destTitle }}
+                            </h3>
+                            <p class="text-xs font-medium text-white/80 flex items-center gap-1.5 group-hover:text-white transition-colors">
+                                <span>Lihat Jadwal & Galeri</span>
+                                <span class="group-hover:translate-x-1.5 transition-transform duration-300">→</span>
+                            </p>
                         </div>
-                    @endif
+                    </a>
+                @endforeach
+            </div>
 
-                </div>
-            @else
-                <div class="text-center py-16 bg-slate-50 rounded-3xl border border-slate-100 reveal-item reveal-fade">
-                    <p class="text-slate-500 text-sm">Belum ada ulasan yang ditampilkan saat ini.</p>
-                </div>
-            @endif
+            {{-- Link Lihat Semua --}}
+            <div class="mt-12 text-center reveal-item reveal-up">
+                <a href="{{ route('gallery') }}"
+                   wire:navigate
+                   class="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-2xl bg-[#1B5A7A] text-white text-xs font-bold shadow-md hover:bg-[#14455e] hover:shadow-lg transition-all cursor-pointer">
+                    <span>Lihat Semua Destinasi</span>
+                    <span>→</span>
+                </a>
+            </div>
 
         </div>
     </section>
+    @endif
+
 
     <!-- 3. SECTION ARTIKEL & EDUKASI WISATA -->
     <section id="articles" class="reveal-group py-20 bg-slate-50 border-t border-slate-200/60">

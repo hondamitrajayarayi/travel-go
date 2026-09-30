@@ -208,17 +208,44 @@ class HomePage extends Component
             ->take(3)
             ->get();
 
+        // Ambil 6 destinasi populer (Highlight / featured aktif)
+        $popularDestinations = Country::where('is_active', true)
+            ->whereHas('galleries', function ($q) {
+                $q->where('is_featured', true)
+                  ->where('is_active', true);
+            })
+            ->with(['galleries' => function ($q) {
+                $q->where('is_active', true)
+                  ->orderBy('is_featured', 'desc');
+            }])
+            ->take(6)
+            ->get();
+
+        if ($popularDestinations->count() < 6) {
+            $additional = Country::where('is_active', true)
+                ->whereNotIn('id', $popularDestinations->pluck('id'))
+                ->with(['galleries' => function ($q) {
+                    $q->where('is_active', true)
+                      ->orderBy('is_featured', 'desc');
+                }])
+                ->take(6 - $popularDestinations->count())
+                ->get();
+
+            $popularDestinations = $popularDestinations->concat($additional);
+        }
+
         return view('livewire.home-page', [
-            'banners'         => $banners,
-            'tours'           => $tours,
-            'totalToursCount' => $totalToursCount,
-            'destinations'    => $destinations,
-            'countries'       => $countries,
-            'months'          => $months,
-            'monthsList'      => $monthsList,
-            'yearsList'       => $yearsList,
-            'testimonials'    => $testimonials,
-            'articles'        => $articles,
+            'banners'             => $banners,
+            'tours'               => $tours,
+            'totalToursCount'     => $totalToursCount,
+            'destinations'        => $destinations,
+            'countries'           => $countries,
+            'months'              => $months,
+            'monthsList'          => $monthsList,
+            'yearsList'           => $yearsList,
+            'testimonials'        => $testimonials,
+            'articles'            => $articles,
+            'popularDestinations' => $popularDestinations,
         ]);
     }
 }

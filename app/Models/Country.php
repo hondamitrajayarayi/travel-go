@@ -26,4 +26,9 @@ class Country extends Model
     {
         return $this->hasMany(Tour::class);
     }
+
+    public function galleries(): HasMany
+    {
+        return $this->hasMany(Gallery::class, 'category', 'name');
+    }
 }

@@ -74,9 +74,8 @@
         <header x-data="{ 
                     mobileMenuOpen: false, 
                     mobileAboutOpen: false,
-                    aboutDropdownOpen: false, 
                     scrolled: false,
-                    activeNav: '{{ request()->routeIs('about') ? 'about' : (request()->routeIs('contact') ? 'contact' : (request()->routeIs('terms') ? 'terms' : (request()->routeIs('faq') ? 'faq' : (request()->routeIs('private-trip') ? 'private-trip' : (request()->routeIs('tour-schedule') ? 'tour-schedule' : (request()->routeIs('articles.*') ? 'articles' : 'home')))))) }}',
+                    activeNav: '{{ request()->routeIs('about') ? 'about' : (request()->routeIs('contact') ? 'contact' : (request()->routeIs('terms') ? 'terms' : (request()->routeIs('faq') ? 'faq' : (request()->routeIs('gallery*') ? 'gallery' : (request()->routeIs('private-trip') ? 'private-trip' : (request()->routeIs('tour-schedule') || request()->routeIs('tour.detail') || request()->routeIs('tour.*') ? 'tour-schedule' : (request()->routeIs('articles.*') ? 'articles' : 'home'))))))) }}',
                     init() {
                         const updateScroll = () => {
                             this.scrolled = window.pageYOffset > 10;
@@ -108,20 +107,21 @@
 
                         <!-- 2. ABOUT US (DROPDOWN) -->
                         <div class="relative py-1" 
+                             x-data="{ aboutDropdownOpen: false }"
                              @mouseenter="aboutDropdownOpen = true" 
-                             @mouseleave="aboutDropdownOpen = false">
-                            <a href="{{ route('about') }}" 
-                               wire:navigate
-                               @click="activeNav = 'about'"
-                               :class="activeNav === 'about' ? 'text-[#3372A1] font-semibold' : 'text-slate-600 hover:text-[#3372A1] font-normal'" 
-                               class="inline-flex items-center gap-1.5 transition-colors duration-200 uppercase cursor-pointer focus:outline-none">
+                             @mouseleave="aboutDropdownOpen = false"
+                             @click.outside="aboutDropdownOpen = false">
+                            <button type="button" 
+                                    @click="aboutDropdownOpen = !aboutDropdownOpen"
+                                    :class="activeNav === 'about' || aboutDropdownOpen ? 'text-[#3372A1] font-semibold' : 'text-slate-600 hover:text-[#3372A1] font-normal'" 
+                                    class="inline-flex items-center gap-1.5 transition-colors duration-200 uppercase cursor-pointer focus:outline-none">
                                 <span>About us</span>
                                 <svg class="w-3.5 h-3.5 transition-transform duration-200" 
                                      :class="aboutDropdownOpen ? 'rotate-180 text-[#3372A1]' : 'text-slate-400'" 
                                      fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                 </svg>
-                            </a>
+                            </button>
 
                             <!-- Dropdown Box -->
                             <div x-show="aboutDropdownOpen" 
@@ -132,35 +132,28 @@
                                  x-transition:leave="transition ease-in duration-150"
                                  x-transition:leave-start="opacity-100 translate-y-0"
                                  x-transition:leave-end="opacity-0 translate-y-2"
-                                 class="absolute left-0 mt-2 w-44 rounded-2xl bg-white shadow-lg shadow-slate-900/10 border border-slate-100 py-1.5 z-50 divide-y divide-slate-50">
+                                 class="absolute left-0 mt-2 w-48 rounded-2xl bg-white shadow-xl shadow-slate-900/10 border border-slate-100 py-1.5 z-50 divide-y divide-slate-50">
                                 
                                 <a href="{{ route('about') }}#history" 
                                    wire:navigate
-                                   @click="activeNav = 'about'; aboutDropdownOpen = false; scrollToSection('history')" 
+                                   @click="activeNav = 'about'; aboutDropdownOpen = false" 
                                    class="flex items-center px-4 py-2 text-xs uppercase tracking-wider text-slate-600 hover:text-[#3372A1] hover:bg-sky-50/50 transition-colors">
                                     <span>History</span>
                                 </a>
 
                                 <a href="{{ route('about') }}#services" 
                                    wire:navigate
-                                   @click="activeNav = 'about'; aboutDropdownOpen = false; scrollToSection('services')" 
+                                   @click="activeNav = 'about'; aboutDropdownOpen = false" 
                                    class="flex items-center px-4 py-2 text-xs uppercase tracking-wider text-slate-600 hover:text-[#3372A1] hover:bg-sky-50/50 transition-colors">
                                     <span>Services</span>
                                 </a>
 
                                 <a href="{{ route('about') }}#why-us" 
                                    wire:navigate
-                                   @click="activeNav = 'about'; aboutDropdownOpen = false; scrollToSection('why-us')" 
+                                   @click="activeNav = 'about'; aboutDropdownOpen = false" 
                                    class="flex items-center px-4 py-2 text-xs uppercase tracking-wider text-slate-600 hover:text-[#3372A1] hover:bg-sky-50/50 transition-colors">
                                     <span>Why Us</span>
                                 </a>
-
-                                <!-- <a href="{{ route('about') }}#career" 
-                                   wire:navigate
-                                   @click="activeNav = 'about'; aboutDropdownOpen = false; scrollToSection('career')" 
-                                   class="flex items-center px-4 py-2 text-xs uppercase tracking-wider text-slate-600 hover:text-[#3372A1] hover:bg-sky-50/50 transition-colors">
-                                    <span>Career</span>
-                                </a> -->
                             </div>
                         </div>
 
@@ -182,16 +175,16 @@
                             Private Trip
                         </a>
 
-                        <!-- 5. ARTIKEL & EDUKASI -->
-                        <!-- <a href="{{ route('articles.index') }}" 
+                        <!-- 5. GALLERY -->
+                        <a href="{{ route('gallery') }}" 
                            wire:navigate
-                           @click="activeNav = 'articles'" 
-                           :class="activeNav === 'articles' ? 'text-[#3372A1] font-semibold' : 'text-slate-600 hover:text-[#3372A1] font-normal'" 
+                           @click="activeNav = 'gallery'" 
+                           :class="activeNav === 'gallery' ? 'text-[#3372A1] font-semibold' : 'text-slate-600 hover:text-[#3372A1] font-normal'" 
                            class="py-1 transition-colors duration-200 uppercase">
-                            Artikel & Tips
-                        </a> -->
+                            Gallery
+                        </a>
 
-                        <!-- 5. CONTACT -->
+                        <!-- 6. CONTACT -->
                         <a href="{{ route('contact') }}" 
                            wire:navigate
                            @click="activeNav = 'contact'" 
@@ -357,19 +350,19 @@
                             </a>
                         </div>
 
-                        <!-- 5. ARTIKEL -->
+                        <!-- 5. GALLERY -->
                         <div class="border-b border-slate-100/80">
-                            <a href="{{ route('articles.index') }}" 
+                            <a href="{{ route('gallery') }}" 
                                wire:navigate
-                               @click="activeNav = 'articles'; mobileMenuOpen = false" 
-                               :class="activeNav === 'articles' ? 'text-[#3372A1] font-semibold' : 'text-slate-800 font-medium hover:text-[#3372A1]'"
+                               @click="activeNav = 'gallery'; mobileMenuOpen = false" 
+                               :class="activeNav === 'gallery' ? 'text-[#3372A1] font-semibold' : 'text-slate-800 font-medium hover:text-[#3372A1]'"
                                class="flex items-center justify-between py-3.5 text-[15px] uppercase tracking-wider transition">
-                                <span>ARTIKEL & TIPS</span>
-                                <span x-show="activeNav === 'articles'" class="w-2 h-2 rounded-full bg-[#3372A1]"></span>
+                                <span>GALLERY</span>
+                                <span x-show="activeNav === 'gallery'" class="w-2 h-2 rounded-full bg-[#3372A1]"></span>
                             </a>
                         </div>
 
-                        <!-- 5. CONTACT -->
+                        <!-- 6. CONTACT -->
                         <div>
                             <a href="{{ route('contact') }}" 
                                wire:navigate
@@ -481,8 +474,8 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('articles.index') }}" wire:navigate class="hover:text-[#3372A1] transition-colors duration-150 inline-flex items-center gap-1.5">
-                                    <span>ARTIKEL & TIPS</span>
+                                <a href="{{ route('gallery') }}" wire:navigate class="hover:text-[#3372A1] transition-colors duration-150 inline-flex items-center gap-1.5">
+                                    <span>GALLERY & TESTIMONI</span>
                                 </a>
                             </li>
                             <li>

@@ -1,2 +1,7 @@
-User-agent: *
-Disallow:
+User-Agent: *
+Allow: /
+Disallow: /admin/login
+Disallow: /admin
+
+Host: https://supervacation.com
+Sitemap: https://supervacation.com/sitemap.xml

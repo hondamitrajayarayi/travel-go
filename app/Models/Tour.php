@@ -22,7 +22,6 @@ class Tour extends Model
         'season',
         'start_date',
         'end_date',
-        'status',
         'description',
         'thumbnail',
         'file_itinerary',
@@ -58,5 +57,10 @@ class Tour extends Model
     public function galleries(): HasMany
     {
         return $this->hasMany(TourGallery::class);
+    }
+
+    public function departures(): HasMany
+    {
+        return $this->hasMany(TourDeparture::class)->orderBy('start_date', 'asc');
     }
 }

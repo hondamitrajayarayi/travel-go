@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
             TourSeeder::class,
             TestimonialSeeder::class,
             ArticleSeeder::class,
+            GallerySeeder::class,
         ]);
     }
 }

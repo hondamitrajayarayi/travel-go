@@ -66,17 +66,7 @@ class TourResource extends Resource
                                             ->label('Kode Negara (ISO)')
                                             ->placeholder('Misal: JP, ID, CH'),
                                     ])
-                                    ->columnSpan(1),
-
-                                Select::make('status')
-                                    ->label('Status Ketersediaan')
-                                    ->options([
-                                        'tersedia' => 'Tersedia',
-                                        'penuh'    => 'Penuh',
-                                    ])
-                                    ->default('tersedia')
-                                    ->required()
-                                    ->columnSpan(1),
+                                    ->columnSpanFull(),
 
                                 TextInput::make('title')
                                     ->label('Judul Paket Tour')
@@ -144,20 +134,45 @@ class TourResource extends Resource
                                     ->nullable()
                                     ->columnSpan(1),
 
-                                DatePicker::make('start_date')
-                                    ->label('Tanggal Mulai Pemberangkatan')
-                                    ->displayFormat('d/m/Y')
-                                    ->placeholder('Pilih tanggal mulai')
-                                    ->nullable()
-                                    ->columnSpan(1),
+                                Repeater::make('departures')
+                                    ->label('Jadwal / Tanggal Pemberangkatan Tour')
+                                    ->relationship('departures')
+                                    ->schema([
+                                        DatePicker::make('start_date')
+                                            ->label('Tanggal Berangkat')
+                                            ->displayFormat('d/m/Y')
+                                            ->required()
+                                            ->columnSpan(1),
 
-                                DatePicker::make('end_date')
-                                    ->label('Tanggal Akhir / Selesai Paket')
-                                    ->displayFormat('d/m/Y')
-                                    ->placeholder('Pilih tanggal selesai')
-                                    ->afterOrEqual('start_date')
-                                    ->nullable()
-                                    ->columnSpan(1),
+                                        DatePicker::make('end_date')
+                                            ->label('Tanggal Selesai (Opsional)')
+                                            ->displayFormat('d/m/Y')
+                                            ->afterOrEqual('start_date')
+                                            ->nullable()
+                                            ->columnSpan(1),
+
+                                        TextInput::make('status')
+                                            ->label('Status / Keterangan Seat')
+                                            ->placeholder('Misal: Tersedia / Sisa 4 Seat / Penuh')
+                                            ->helperText('Bebas diisi teks/angka')
+                                            ->nullable()
+                                            ->columnSpan(1),
+
+                                        Select::make('status_color')
+                                            ->label('Warna Status')
+                                            ->options([
+                                                'green'  => '🟢 Hijau (Tersedia / Aman)',
+                                                'orange' => '🟠 Oranye (Sisa Sedikit / Terbatas)',
+                                                'red'    => '🔴 Merah (Penuh / Ditutup)',
+                                            ])
+                                            ->default('green')
+                                            ->required()
+                                            ->columnSpan(1),
+                                    ])
+                                    ->columns(4)
+                                    ->defaultItems(1)
+                                    ->addActionLabel('Tambah Tanggal Pemberangkatan')
+                                    ->columnSpanFull(),
 
                                 FileUpload::make('thumbnail')
                                     ->label('Foto Thumbnail Utama')
@@ -353,19 +368,6 @@ class TourResource extends Resource
                     ->placeholder('-')
                     ->sortable(),
 
-                TextColumn::make('status')
-                    ->label('Status')
-                    ->badge()
-                    ->colors([
-                        'success' => 'tersedia',
-                        'danger'  => 'penuh',
-                    ])
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'penuh'    => 'Penuh',
-                        default    => 'Tersedia',
-                    })
-                    ->sortable(),
-
                 TextColumn::make('price')
                     ->label('Harga Normal')
                     ->money('IDR', locale: 'id')
@@ -383,18 +385,13 @@ class TourResource extends Resource
                     ->badge()
                     ->color('gray'),
 
-                TextColumn::make('start_date')
-                    ->label('Tgl Mulai')
+                TextColumn::make('departures.start_date')
+                    ->label('Jadwal Berangkat')
                     ->date('d M Y')
-                    ->placeholder('-')
-                    ->sortable()
-                    ->toggleable(),
-
-                TextColumn::make('end_date')
-                    ->label('Tgl Selesai')
-                    ->date('d M Y')
-                    ->placeholder('-')
-                    ->sortable()
+                    ->listWithLineBreaks()
+                    ->limitList(2)
+                    ->expandableLimitedList()
+                    ->placeholder('Belum ada jadwal')
                     ->toggleable(),
 
                 TextColumn::make('file_itinerary')
@@ -425,13 +422,6 @@ class TourResource extends Resource
                         'Sepanjang Tahun (All Season)' => 'Sepanjang Tahun (All Season)',
                     ]),
 
-                Tables\Filters\SelectFilter::make('status')
-                    ->label('Filter Status')
-                    ->options([
-                        'tersedia' => 'Tersedia',
-                        'penuh'    => 'Penuh',
-                    ]),
-
                 Tables\Filters\Filter::make('departure_period')
                     ->form([
                         DatePicker::make('from')->label('Mulai Dari'),
@@ -439,8 +429,8 @@ class TourResource extends Resource
                     ])
                     ->query(function ($query, array $data) {
                         return $query
-                            ->when($data['from'], fn ($q, $date) => $q->whereDate('start_date', '>=', $date))
-                            ->when($data['until'], fn ($q, $date) => $q->whereDate('end_date', '<=', $date));
+                            ->when($data['from'], fn ($q, $date) => $q->whereHas('departures', fn ($sq) => $sq->whereDate('start_date', '>=', $date)))
+                            ->when($data['until'], fn ($q, $date) => $q->whereHas('departures', fn ($sq) => $sq->whereDate('start_date', '<=', $date)));
                     }),
             ])
             ->actions([

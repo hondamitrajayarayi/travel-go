@@ -119,6 +119,7 @@ class TourSchedulePage extends Component
         ];
 
         $toursQuery = Tour::query()
+            ->with(['country', 'departures'])
             ->when($this->search !== '', function ($query) {
                 $query->where(function ($q) {
                     $q->where('title', 'like', '%' . $this->search . '%')
@@ -145,7 +146,7 @@ class TourSchedulePage extends Component
                     $mNum = (int) $parts[1];
                     $mName = $monthsList[(string)$mNum] ?? '';
                     $query->where(function ($q) use ($parts, $mNum, $mName) {
-                        $q->where(function ($sub) use ($parts) {
+                        $q->whereHas('departures', function ($sub) use ($parts) {
                             $sub->whereYear('start_date', $parts[0])
                                 ->whereMonth('start_date', $parts[1]);
                         })
@@ -160,7 +161,9 @@ class TourSchedulePage extends Component
                     $mNum = (int) $this->selectedMonth;
                     $mName = $monthsList[(string)$mNum] ?? '';
                     $query->where(function ($q) use ($mNum, $mName) {
-                        $q->whereMonth('start_date', $mNum);
+                        $q->whereHas('departures', function ($sub) use ($mNum) {
+                            $sub->whereMonth('start_date', $mNum);
+                        });
                         if ($mName) {
                             $q->orWhere('season', 'like', '%' . $mName . '%');
                         }
@@ -172,7 +175,9 @@ class TourSchedulePage extends Component
                     foreach ($this->selectedMonths as $monthNum) {
                         $mInt = (int)$monthNum;
                         $mName = $monthsList[(string)$mInt] ?? '';
-                        $q->orWhereMonth('start_date', $mInt);
+                        $q->orWhereHas('departures', function ($sub) use ($mInt) {
+                            $sub->whereMonth('start_date', $mInt);
+                        });
                         if (!empty($mName)) {
                             $q->orWhere('season', 'like', '%' . $mName . '%')
                               ->orWhere('title', 'like', '%' . $mName . '%')
@@ -185,7 +190,9 @@ class TourSchedulePage extends Component
                 $query->where(function ($q) {
                     foreach ($this->selectedYears as $year) {
                         $yInt = (int)$year;
-                        $q->orWhereYear('start_date', $yInt);
+                        $q->orWhereHas('departures', function ($sub) use ($yInt) {
+                            $sub->whereYear('start_date', $yInt);
+                        });
                         $q->orWhere('season', 'like', '%' . $yInt . '%')
                           ->orWhere('title', 'like', '%' . $yInt . '%')
                           ->orWhere('description', 'like', '%' . $yInt . '%');

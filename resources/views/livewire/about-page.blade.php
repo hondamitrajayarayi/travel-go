@@ -133,8 +133,8 @@
                             <span class="text-[11px] font-medium text-slate-500">Destinasi Populer</span>
                         </div>
                         <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-center hover:bg-white hover:border-blue-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
-                            <span class="block text-2xl sm:text-3xl font-semibold text-[#1B5A7A] group-hover:scale-105 transition-transform duration-300">100%</span>
-                            <span class="text-[11px] font-medium text-slate-500">Pasti Berangkat</span>
+                            <span class="block text-2xl sm:text-3xl font-semibold text-[#1B5A7A] group-hover:scale-105 transition-transform duration-300">100+</span>
+                            <span class="text-[11px] font-medium text-slate-500">Pilihan Tour Package</span>
                         </div>
                         <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-center hover:bg-white hover:border-blue-200 hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
                             <span class="block text-2xl sm:text-3xl font-semibold text-[#1B5A7A] group-hover:scale-105 transition-transform duration-300">24/7</span>

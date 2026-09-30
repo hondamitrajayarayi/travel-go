@@ -5,6 +5,8 @@ use App\Livewire\ArticleDetailPage;
 use App\Livewire\ArticleIndexPage;
 use App\Livewire\ContactPage;
 use App\Livewire\FaqPage;
+use App\Livewire\GalleryDetailPage;
+use App\Livewire\GalleryPage;
 use App\Livewire\HomePage;
 use App\Livewire\PrivateTripPage;
 use App\Livewire\TermsPage;
@@ -33,6 +35,10 @@ Route::get('/tour/{slug}', TourDetailPage::class)->name('tour.detail');
 
 // Halaman Private Trip & Custom Tour
 Route::get('/private-trip', PrivateTripPage::class)->name('private-trip');
+
+// Halaman Galeri & Dokumentasi Trip
+Route::get('/gallery', GalleryPage::class)->name('gallery');
+Route::get('/gallery/{slug}', GalleryDetailPage::class)->name('gallery.detail');
 
 // Halaman Artikel & Edukasi Wisata
 Route::get('/articles', ArticleIndexPage::class)->name('articles.index');

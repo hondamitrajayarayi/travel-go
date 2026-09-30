@@ -12,7 +12,7 @@ class TourDetailPage extends Component
 
     public function mount(string $slug)
     {
-        $this->tour = Tour::with(['country', 'itineraries', 'facilities', 'galleries'])
+        $this->tour = Tour::with(['country', 'itineraries', 'facilities', 'galleries', 'departures'])
             ->where('slug', $slug)
             ->firstOrFail();
     }
@@ -24,7 +24,8 @@ class TourDetailPage extends Component
 
     public function render()
     {
-        $relatedTours = Tour::where('id', '!=', $this->tour->id)
+        $relatedTours = Tour::with(['country', 'departures'])
+            ->where('id', '!=', $this->tour->id)
             ->where(function ($q) {
                 if ($this->tour->country_id) {
                     $q->where('country_id', $this->tour->country_id);
@@ -37,7 +38,8 @@ class TourDetailPage extends Component
             ->get();
 
         if ($relatedTours->count() < 3) {
-            $extra = Tour::where('id', '!=', $this->tour->id)
+            $extra = Tour::with(['country', 'departures'])
+                ->where('id', '!=', $this->tour->id)
                 ->whereNotIn('id', $relatedTours->pluck('id'))
                 ->latest()
                 ->take(3 - $relatedTours->count())

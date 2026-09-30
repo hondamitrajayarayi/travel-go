@@ -1,27 +1,61 @@
+@php
+    $departuresList = $tour->departures->map(function($d) {
+        $dLabel = $d->start_date->format('d M Y') . ($d->end_date ? ' – ' . $d->end_date->format('d M Y') : '');
+        return [
+            'id'           => (string)$d->id,
+            'label'        => $dLabel,
+            'start_date'   => $d->start_date->format('d M Y'),
+            'end_date'     => $d->end_date ? $d->end_date->format('d M Y') : null,
+            'status'       => $d->status ?: 'Tour Package Ready',
+            'status_color' => $d->status_color ?: 'green',
+        ];
+    })->values()->all();
+
+    $initialDep = !empty($departuresList) ? $departuresList[0] : null;
+    $initialDate = $initialDep ? $initialDep['label'] : ($tour->start_date ? $tour->start_date->format('d M Y') . ($tour->end_date ? ' – ' . $tour->end_date->format('d M Y') : '') : 'Jadwal Fleksibel');
+    $initialStatus = $initialDep ? $initialDep['status'] : 'Tour Package Ready';
+    $initialColor = $initialDep ? $initialDep['status_color'] : 'green';
+
+    $parsePrice = function($amount) {
+        if (!$amount) return ['num' => '0', 'unit' => 'Rp / pax'];
+        if ($amount >= 1000000) {
+            $val = $amount / 1000000;
+            $formatted = number_format($val, (floor($val) == $val) ? 0 : 1, ',', '.');
+            return ['num' => $formatted, 'unit' => 'Juta / pax'];
+        } elseif ($amount >= 1000) {
+            $val = $amount / 1000;
+            $formatted = number_format($val, (floor($val) == $val) ? 0 : 1, ',', '.');
+            return ['num' => $formatted, 'unit' => 'Ribu / pax'];
+        }
+        return ['num' => number_format($amount, 0, ',', '.'), 'unit' => 'Rp / pax'];
+    };
+
+    $currentPrice = ((float)$tour->promo_price > 0 && (float)$tour->promo_price < (float)$tour->price) ? $tour->promo_price : $tour->price;
+    $priceData = $parsePrice($currentPrice);
+    $oldPriceData = ((float)$tour->promo_price > 0 && (float)$tour->promo_price < (float)$tour->price) ? $parsePrice($tour->price) : null;
+    $includes = $tour->facilities->where('type', 'include');
+    $excludes = $tour->facilities->where('type', 'exclude');
+@endphp
+
 <div class="pt-20 pb-20 bg-slate-50 min-h-screen text-slate-800" 
-     x-data="{ activeImage: '{{ $tour->thumbnail ? asset('storage/' . $tour->thumbnail) : '' }}', copied: false }">
-
-    @php
-        $parsePrice = function($amount) {
-            if (!$amount) return ['num' => '0', 'unit' => 'Rp / pax'];
-            if ($amount >= 1000000) {
-                $val = $amount / 1000000;
-                $formatted = number_format($val, (floor($val) == $val) ? 0 : 1, ',', '.');
-                return ['num' => $formatted, 'unit' => 'Juta / pax'];
-            } elseif ($amount >= 1000) {
-                $val = $amount / 1000;
-                $formatted = number_format($val, (floor($val) == $val) ? 0 : 1, ',', '.');
-                return ['num' => $formatted, 'unit' => 'Ribu / pax'];
-            }
-            return ['num' => number_format($amount, 0, ',', '.'), 'unit' => 'Rp / pax'];
-        };
-
-        $currentPrice = ((float)$tour->promo_price > 0 && (float)$tour->promo_price < (float)$tour->price) ? $tour->promo_price : $tour->price;
-        $priceData = $parsePrice($currentPrice);
-        $oldPriceData = ((float)$tour->promo_price > 0 && (float)$tour->promo_price < (float)$tour->price) ? $parsePrice($tour->price) : null;
-        $includes = $tour->facilities->where('type', 'include');
-        $excludes = $tour->facilities->where('type', 'exclude');
-    @endphp
+     x-data="{ 
+         activeImage: '{{ $tour->thumbnail ? asset('storage/' . $tour->thumbnail) : '' }}', 
+         copied: false,
+         departures: {{ json_encode($departuresList) }},
+         selectedDepId: '{{ $initialDep ? $initialDep['id'] : '' }}',
+         selectedDate: '{{ $initialDate }}',
+         selectedStatus: '{{ $initialStatus }}',
+         selectedColor: '{{ $initialColor }}',
+         onDepartureChange(id) {
+             const found = this.departures.find(d => String(d.id) === String(id));
+             if (found) {
+                 this.selectedDepId = String(found.id);
+                 this.selectedDate = found.label;
+                 this.selectedStatus = found.status;
+                 this.selectedColor = found.status_color;
+             }
+         }
+     }">
 
     {{-- ===== JSON-LD STRUCTURED DATA (SEO Rich Snippets untuk Google) ===== --}}
     @once
@@ -41,7 +75,10 @@
         if ($tour->season) {
             $additionalProps[] = ['@type' => 'PropertyValue', 'name' => 'Musim', 'value' => $tour->season];
         }
-        if ($tour->start_date) {
+        if ($tour->departures && $tour->departures->isNotEmpty()) {
+            $datesStr = $tour->departures->map(fn($d) => $d->start_date->format('d M Y'))->join(', ');
+            $additionalProps[] = ['@type' => 'PropertyValue', 'name' => 'Tanggal Berangkat', 'value' => $datesStr];
+        } elseif ($tour->start_date) {
             $additionalProps[] = ['@type' => 'PropertyValue', 'name' => 'Tanggal Berangkat', 'value' => $tour->start_date->format('d M Y')];
         }
         if ($tour->country) {
@@ -60,9 +97,7 @@
                 '@type'          => 'Offer',
                 'priceCurrency'  => 'IDR',
                 'price'          => $seoTourPrice,
-                'availability'   => $tour->status === 'tersedia'
-                                    ? 'https://schema.org/InStock'
-                                    : 'https://schema.org/SoldOut',
+                'availability'   => 'https://schema.org/InStock',
                 'url'            => $seoTourUrl,
                 'seller'         => ['@type' => 'Organization', 'name' => 'Super Vacation'],
             ],
@@ -121,40 +156,77 @@
                 </h1>
             </div>
 
-            <!-- Clean Metadata Info Strip (Rapi, Terstruktur, Tanpa Icon Berlebihan) -->
+            <!-- Clean Metadata Info Strip (Rapi, Terstruktur, Dropdown Select Tanggal & Status Terupdate) -->
             <div :class="show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'" 
-                 class="transition-all duration-700 delay-200 ease-out flex flex-wrap items-center gap-y-3 gap-x-8 pt-5 border-t border-slate-100 text-xs sm:text-sm">
-                <div>
-                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Tanggal Keberangkatan</span>
-                    <span class="font-medium text-slate-800">
-                        {{ $tour->start_date ? $tour->start_date->format('d M Y') : 'Jadwal Fleksibel' }}
-                        @if($tour->end_date) – {{ $tour->end_date->format('d M Y') }} @endif
-                    </span>
-                </div>
-
-                <div class="hidden sm:block w-px h-7 bg-slate-200"></div>
-
-                <div>
-                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Rute & Destinasi</span>
-                    <span class="font-medium text-slate-800">{{ $tour->destination }}</span>
-                </div>
-
-                <div class="hidden sm:block w-px h-7 bg-slate-200"></div>
-
-                <div>
-                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Durasi Trip</span>
-                    <span class="font-medium text-slate-800">{{ $tour->duration }}</span>
-                </div>
-
-                <div class="hidden sm:block w-px h-7 bg-slate-200"></div>
-
-                <div>
-                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Status Kuota</span>
-                    @if($tour->status === 'penuh')
-                        <span class="font-semibold text-rose-600">Kuota Penuh</span>
+                 class="transition-all duration-700 delay-200 ease-out flex flex-wrap items-center gap-y-4 gap-x-8 pt-5 border-t border-slate-100 text-xs sm:text-sm">
+                <div class="flex-1 min-w-[280px] sm:min-w-[340px] max-w-md">
+                    <label for="departure_select" class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Pilih Tanggal Keberangkatan</label>
+                    @if($tour->departures && $tour->departures->count() > 1)
+                        <div class="relative w-full">
+                            <select id="departure_select" 
+                                    x-model="selectedDepId" 
+                                    @change="onDepartureChange($event.target.value)"
+                                    class="appearance-none w-full bg-sky-50/90 hover:bg-sky-100/90 border border-sky-200 text-slate-900 font-bold rounded-xl text-xs sm:text-sm pl-4 pr-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#1B5A7A] focus:border-[#1B5A7A] transition cursor-pointer shadow-xs">
+                                @foreach($tour->departures as $dep)
+                                    <option value="{{ $dep->id }}">
+                                        {{ $dep->start_date->format('d M Y') }}@if($dep->end_date) – {{ $dep->end_date->format('d M Y') }}@endif
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#1B5A7A]">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
+                    @elseif($tour->departures && $tour->departures->count() === 1)
+                        <span class="font-bold text-slate-800 text-sm">
+                            {{ $tour->departures->first()->start_date->format('d M Y') }}@if($tour->departures->first()->end_date) – {{ $tour->departures->first()->end_date->format('d M Y') }}@endif
+                        </span>
+                    @elseif($tour->start_date)
+                        <span class="font-bold text-slate-800 text-sm">
+                            {{ $tour->start_date->format('d M Y') }}@if($tour->end_date) – {{ $tour->end_date->format('d M Y') }}@endif
+                        </span>
                     @else
-                        <span class="font-semibold text-emerald-600">Pasti Berangkat</span>
+                        <span class="font-bold text-slate-800 text-sm">Jadwal Fleksibel</span>
                     @endif
+                </div>
+
+                <div class="hidden sm:block w-px h-8 bg-slate-200"></div>
+
+                <div>
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Rute & Destinasi</span>
+                    <span class="font-bold text-slate-800">{{ $tour->destination }}</span>
+                </div>
+
+                <div class="hidden sm:block w-px h-8 bg-slate-200"></div>
+
+                <div>
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Durasi Trip</span>
+                    <span class="font-bold text-slate-800">{{ $tour->duration }}</span>
+                </div>
+
+                <div class="hidden sm:block w-px h-8 bg-slate-200"></div>
+
+                <div>
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Status Kuota</span>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full animate-pulse shrink-0"
+                              :class="{
+                                  'bg-rose-500': selectedColor === 'red',
+                                  'bg-amber-500': selectedColor === 'orange',
+                                  'bg-emerald-500': selectedColor === 'green' || !['red','orange'].includes(selectedColor)
+                              }"></span>
+                        <span class="font-bold text-xs sm:text-sm"
+                              :class="{
+                                  'text-rose-600': selectedColor === 'red',
+                                  'text-amber-600': selectedColor === 'orange',
+                                  'text-emerald-600': selectedColor === 'green' || !['red','orange'].includes(selectedColor)
+                              }"
+                              x-text="selectedStatus">
+                            {{ $initialStatus }}
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -170,7 +242,7 @@
             <!-- LEFT COLUMN: FEATURED PHOTO WITH OVERLAID DESTINATION NAME & THUMBNAILS (Col-span 8) -->
             <div class="lg:col-span-8 space-y-4">
                 
-                <!-- BINGKAI FOTO MEWAH DENGAN NAMA DESTINASI DI DALAM GAMBAR -->
+                <!-- BINGKAI FOTO MEWAH DENGAN OVERLAY BERSIH & ELEGAN -->
                 <div class="relative h-80 sm:h-[480px] lg:h-[520px] rounded-3xl overflow-hidden bg-slate-900 shadow-2xl border border-slate-200/90 group">
                     
                     <!-- Foto Utama -->
@@ -187,7 +259,7 @@
                     </template>
 
                     <!-- Cinematic Vignette & Dark Gradient Overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent pointer-events-none"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
 
                     <!-- Top Left Promo Badge -->
                     @if((float)$tour->promo_price > 0 && (float)$tour->promo_price < (float)$tour->price)
@@ -196,133 +268,43 @@
                                 PROMO DISKON HARGA
                             </span>
                         </div>
-                    @else
-                        <div class="absolute top-5 left-5 z-10">
-                            <span class="px-3.5 py-1.5 rounded-full bg-slate-950/70 backdrop-blur-md text-emerald-300 font-semibold text-xs shadow-md border border-white/20 flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                                Pasti Berangkat
-                            </span>
-                        </div>
                     @endif
 
-                    <!-- Top Right Duration Tag -->
-                    <div class="absolute top-5 right-5 z-10">
-                        <span class="px-4 py-1.5 rounded-full bg-slate-950/75 backdrop-blur-md text-white font-semibold text-xs shadow-md border border-white/20">
-                            {{ $tour->duration }}
-                        </span>
-                    </div>
-
-                    <!-- NAMA DESTINASI TEMPATKAN DI DALAM GAMBAR -->
-                    <div class="absolute bottom-6 left-6 right-6 sm:bottom-8 sm:left-8 sm:right-8 z-10 text-white space-y-2">
-                        
-                        <!-- Destinasi Badge -->
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/25 border border-sky-400/40 backdrop-blur-md text-[11px] font-bold uppercase tracking-[0.2em] text-sky-200">
-                            <svg class="w-3.5 h-3.5 text-sky-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
-                            <span>Destinasi Rute Trip</span>
+                    <!-- Caption Destinasi di Bagian Bawah Foto (Elegan, Tidak Berlebihan) -->
+                    <div class="absolute bottom-6 left-6 right-6 sm:bottom-8 sm:left-8 sm:right-8 z-10 text-white flex items-end justify-between">
+                        <div>
+                            <span class="text-[11px] font-bold tracking-[0.2em] text-sky-300 uppercase block mb-1">
+                                {{ $tour->country ? $tour->country->name : 'DESTINASI' }}
+                            </span>
+                            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold uppercase tracking-wide text-white drop-shadow-md leading-tight">
+                                {{ $tour->destination }}
+                            </h2>
                         </div>
-
-                        <!-- Nama Destinasi Bold & Menawan -->
-                        <h2 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold uppercase tracking-wide text-white drop-shadow-lg leading-tight">
-                            {{ $tour->destination }}
-                        </h2>
-
-                        <!-- Sub-metadata rute -->
-                        <div class="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-sky-100/90 font-medium pt-1">
-                            @if($tour->country)
-                                <span class="flex items-center gap-1.5 font-semibold text-white">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
-                                    {{ $tour->country->name }}
-                                </span>
-                            @endif
-                            @if($tour->season)
-                                <span class="text-white/40">•</span>
-                                <span>{{ $tour->season }} Season</span>
-                            @endif
-                            @if($tour->start_date)
-                                <span class="text-white/40">•</span>
-                                <span>Keberangkatan: <strong>{{ $tour->start_date->format('d M Y') }}</strong></span>
-                            @endif
-                        </div>
-
                     </div>
                 </div>
 
                 <!-- Thumbnail Navigation Carousel Grid -->
-                <div class="flex items-center gap-3 overflow-x-auto pb-2 custom-scrollbar">
-                    @if($tour->thumbnail)
-                        <button type="button" 
-                                @click="activeImage = '{{ asset('storage/' . $tour->thumbnail) }}'" 
-                                :class="activeImage === '{{ asset('storage/' . $tour->thumbnail) }}' ? 'ring-2 ring-[#1B5A7A] scale-105 opacity-100 shadow-md' : 'opacity-70 hover:opacity-100'"
-                                class="w-20 h-16 sm:w-24 sm:h-20 rounded-2xl overflow-hidden shrink-0 transition-all duration-200 cursor-pointer bg-slate-200 border border-slate-200">
-                            <img src="{{ asset('storage/' . $tour->thumbnail) }}" alt="Thumbnail Utama" class="w-full h-full object-cover" />
-                        </button>
-                    @endif
+                @if($tour->galleries->count() > 0)
+                    <div class="flex items-center gap-3 overflow-x-auto pb-2 custom-scrollbar">
+                        @if($tour->thumbnail)
+                            <button type="button" 
+                                    @click="activeImage = '{{ asset('storage/' . $tour->thumbnail) }}'" 
+                                    :class="activeImage === '{{ asset('storage/' . $tour->thumbnail) }}' ? 'ring-2 ring-[#1B5A7A] scale-105 opacity-100 shadow-md' : 'opacity-70 hover:opacity-100'"
+                                    class="w-20 h-16 sm:w-24 sm:h-20 rounded-2xl overflow-hidden shrink-0 transition-all duration-200 cursor-pointer bg-slate-200 border border-slate-200">
+                                <img src="{{ asset('storage/' . $tour->thumbnail) }}" alt="Thumbnail Utama" class="w-full h-full object-cover" />
+                            </button>
+                        @endif
 
-                    @foreach($tour->galleries as $gal)
-                        <button type="button" 
-                                @click="activeImage = '{{ asset('storage/' . $gal->image_path) }}'" 
-                                :class="activeImage === '{{ asset('storage/' . $gal->image_path) }}' ? 'ring-2 ring-[#1B5A7A] scale-105 opacity-100 shadow-md' : 'opacity-70 hover:opacity-100'"
-                                class="w-20 h-16 sm:w-24 sm:h-20 rounded-2xl overflow-hidden shrink-0 transition-all duration-200 cursor-pointer bg-slate-200 border border-slate-200">
-                            <img src="{{ asset('storage/' . $gal->image_path) }}" alt="Galeri {{ $loop->iteration }}" class="w-full h-full object-cover" />
-                        </button>
-                    @endforeach
-                </div>
-
-                <!-- MINIMALIST QUICK SPECS GRID -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white p-4 rounded-3xl border border-slate-200/90 shadow-sm">
-                    <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-sky-100 text-[#1B5A7A] flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <div class="min-w-0">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Durasi</span>
-                            <span class="font-bold text-slate-900 text-xs sm:text-sm truncate block">{{ $tour->duration }}</span>
-                        </div>
+                        @foreach($tour->galleries as $gal)
+                            <button type="button" 
+                                    @click="activeImage = '{{ asset('storage/' . $gal->image_path) }}'" 
+                                    :class="activeImage === '{{ asset('storage/' . $gal->image_path) }}' ? 'ring-2 ring-[#1B5A7A] scale-105 opacity-100 shadow-md' : 'opacity-70 hover:opacity-100'"
+                                    class="w-20 h-16 sm:w-24 sm:h-20 rounded-2xl overflow-hidden shrink-0 transition-all duration-200 cursor-pointer bg-slate-200 border border-slate-200">
+                                <img src="{{ asset('storage/' . $gal->image_path) }}" alt="Galeri {{ $loop->iteration }}" class="w-full h-full object-cover" />
+                            </button>
+                        @endforeach
                     </div>
-
-                    <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-                        <div class="min-w-0">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Keberangkatan</span>
-                            <span class="font-bold text-slate-900 text-xs sm:text-sm truncate block">
-                                @if($tour->start_date) {{ $tour->start_date->format('d M Y') }} @else Flexi Date @endif
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z" />
-                            </svg>
-                        </div>
-                        <div class="min-w-0">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Musim</span>
-                            <span class="font-bold text-slate-900 text-xs sm:text-sm truncate block">{{ $tour->season ?: 'All Season' }}</span>
-                        </div>
-                    </div>
-
-                    <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 002 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h1.5a2.5 2.5 0 002.5-2.5V11a2 2 0 00-2-2h-1c-1.105 0-2-.895-2-2V4.055M12 21a9 9 0 100-18 9 9 0 000 18z" />
-                            </svg>
-                        </div>
-                        <div class="min-w-0">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Kategori</span>
-                            <span class="font-bold text-slate-900 text-xs sm:text-sm truncate block">{{ $tour->country ? $tour->country->name : 'International' }}</span>
-                        </div>
-                    </div>
-                </div>
+                @endif
 
             </div>
 
@@ -332,7 +314,7 @@
                 <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xl p-6 space-y-6">
                     
                     <div class="p-5 rounded-2xl bg-gradient-to-br from-[#1B5A7A] to-[#0F355C] text-white space-y-2 relative overflow-hidden shadow-inner">
-                        <span class="text-[11px] font-semibold text-sky-200 uppercase tracking-wider block">Harga Paket Per Orang</span>
+                        <span class="text-[11px] font-semibold text-sky-200 uppercase tracking-wider block">Harga Mulai Dari / Pax</span>
                         
                         <div class="flex items-baseline gap-2">
                             <span class="text-3xl sm:text-4xl font-semibold tracking-tight text-white">
@@ -347,42 +329,36 @@
                         @endif
 
                         <span class="text-[10px] text-sky-200 font-medium block">
-                            *Harga nett per pax
+                            *Harga nett per orang
                         </span>
                     </div>
 
-                    <div class="space-y-2.5 text-xs text-slate-700">
-                        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
-                            <span class="text-slate-500 font-medium">Status Kuota</span>
-                            <span class="font-semibold">
-                                @if($tour->status === 'penuh')
-                                    <span class="inline-flex items-center gap-1.5 text-rose-600 font-semibold">
-                                        <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-                                        Kuota Penuh
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center gap-1.5 text-emerald-700 font-semibold">
-                                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                        Kuota Tersedia
-                                    </span>
-                                @endif
-                            </span>
-                        </div>
-
-                        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
-                            <span class="text-slate-500 font-medium">Tanggal Berangkat</span>
-                            <span class="font-semibold text-slate-900">
-                                @if($tour->start_date) {{ $tour->start_date->format('d M Y') }} @else Fleksibel @endif
-                            </span>
+                    <div class="space-y-3 text-xs text-slate-700">
+                        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Jadwal Keberangkatan Terpilih</span>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-bold text-slate-900 text-xs sm:text-sm" x-text="selectedDate">
+                                    {{ $initialDate }}
+                                </span>
+                                <span class="text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider border shrink-0"
+                                      :class="{
+                                          'bg-rose-50 text-rose-700 border-rose-200': selectedColor === 'red',
+                                          'bg-amber-50 text-amber-800 border-amber-200': selectedColor === 'orange',
+                                          'bg-emerald-50 text-emerald-800 border-emerald-200': selectedColor === 'green' || !['red','orange'].includes(selectedColor)
+                                      }"
+                                      x-text="selectedStatus">
+                                    {{ $initialStatus }}
+                                </span>
+                            </div>
                         </div>
                     </div>
 
                     <div class="space-y-3 pt-2">
-                        <a href="https://wa.me/{{ \App\Models\Setting::get('whatsapp_number', '6287887840636') }}?text={{ urlencode('Halo Super Vacation, saya berminat untuk memesan paket tour: ' . $tour->title . ' (Harga: Rp ' . number_format($currentPrice, 0, ',', '.') . ')') }}" 
+                        <a :href="'https://wa.me/{{ \App\Models\Setting::get('whatsapp_number', '6287887840636') }}?text=' + encodeURIComponent('Halo Super Vacation, saya berminat untuk memesan paket tour: {{ $tour->title }}' + (selectedDate ? ' (Jadwal: ' + selectedDate + ' - ' + selectedStatus + ')' : '') + ' (Harga: Rp {{ number_format($currentPrice, 0, ',', '.') }})')" 
                            target="_blank" 
                            class="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95 cursor-pointer">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.893 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
                             </svg>
                             <span>Pesan via WhatsApp</span>
                         </a>
@@ -471,22 +447,17 @@
                         </h2>
                     </div>
 
-                    <div class="border-t border-slate-200 pt-6 space-y-5">
-                        <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">DURASI</span>
-                            <span class="text-lg font-extrabold text-slate-900 block mt-1">{{ $tour->duration }}</span>
-                        </div>
-
-                        <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">RUTE</span>
-                            <span class="text-sm font-bold text-slate-900 block mt-1 uppercase leading-relaxed">{{ $tour->destination }}</span>
-                        </div>
-
-                        @if($tour->season)
-                            <div>
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">MUSIM</span>
-                                <span class="text-sm font-bold text-slate-900 block mt-1 uppercase">{{ $tour->season }} Season</span>
-                            </div>
+                    <div class="border-t border-slate-200 pt-6 space-y-4">
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                            Rencana perjalanan lengkap dan terstruktur hari demi hari untuk memastikan liburan Anda nyaman, aman, dan berkesan bersama Super Vacation.
+                        </p>
+                        @if($tour->file_itinerary)
+                            <a href="{{ asset('storage/' . $tour->file_itinerary) }}" target="_blank" class="inline-flex items-center gap-2 text-xs font-bold text-[#1B5A7A] hover:underline pt-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                <span>Unduh Itinerary Lengkap (PDF)</span>
+                            </a>
                         @endif
                     </div>
                 </div>
@@ -625,14 +596,6 @@
                         <div onclick="window.location.href='/tour/{{ $relTour->slug }}'" 
                              class="group bg-white rounded-3xl border border-slate-200/90 shadow-md hover:shadow-2xl hover:shadow-sky-950/15 hover:border-sky-300 transition-all duration-300 flex flex-col overflow-hidden relative cursor-pointer">
                             
-                            @if($relTour->status === 'penuh')
-                                <div class="absolute inset-0 bg-slate-900/40 backdrop-grayscale z-30 pointer-events-none rounded-3xl flex items-center justify-center">
-                                    <span class="px-5 py-2.5 rounded-2xl bg-rose-600/95 text-white font-semibold text-sm tracking-widest uppercase shadow-2xl border-2 border-white/40 transform -rotate-3">
-                                        KUOTA PENUH
-                                    </span>
-                                </div>
-                            @endif
-
                             <div class="bg-[#E6F0F8] border-b border-sky-100 py-2.5 px-4 text-center font-semibold text-xs sm:text-sm tracking-wider uppercase text-[#1B5A7A]">
                                 {{ $relTour->season ? strtoupper($relTour->season) . ' SEASON' : 'SUPER VACATION TOUR' }}
                             </div>
@@ -655,7 +618,11 @@
                                 <h3 class="font-semibold text-white text-base uppercase tracking-wide leading-tight line-clamp-2">
                                     {{ $relTour->title }}
                                 </h3>
-                                @if($relTour->start_date)
+                                @if($relTour->departures && $relTour->departures->isNotEmpty())
+                                    <div class="text-[#0F355C] font-semibold text-xs flex items-center justify-center gap-1">
+                                        <span>{{ $relTour->departures->first()->start_date->format('d M Y') }}@if($relTour->departures->count() > 1) (+{{ $relTour->departures->count() - 1 }})@endif</span>
+                                    </div>
+                                @elseif($relTour->start_date)
                                     <div class="text-[#0F355C] font-semibold text-xs flex items-center justify-center gap-1">
                                         <span>{{ $relTour->start_date->format('d M Y') }}</span>
                                     </div>
@@ -761,7 +728,7 @@
             @endif
         </div>
 
-        <a href="https://wa.me/{{ \App\Models\Setting::get('whatsapp_number', '6287887840636') }}?text={{ urlencode('Halo Super Vacation, saya berminat dengan paket tour: ' . $tour->title) }}" 
+        <a :href="'https://wa.me/{{ \App\Models\Setting::get('whatsapp_number', '6287887840636') }}?text=' + encodeURIComponent('Halo Super Vacation, saya berminat dengan paket tour: {{ $tour->title }}' + (selectedDate ? ' (Jadwal: ' + selectedDate + ' - ' + selectedStatus + ')' : '') + ' (Harga: Rp {{ number_format($currentPrice, 0, ',', '.') }})')" 
            target="_blank" 
            class="w-12 h-12 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white shadow-lg shadow-emerald-500/25 flex items-center justify-center transition-all duration-200 active:scale-95 cursor-pointer shrink-0"
            title="Pesan via WhatsApp">
